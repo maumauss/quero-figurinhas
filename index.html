@@ -77,10 +77,10 @@
     <div id="banner-container" class="w-full bg-[#2b0e12] border-b border-[#5a2228] px-3 py-3 flex justify-center items-center">
         <div class="max-w-7xl w-full flex justify-center">
             <img id="header-banner-img" 
-                 src="https://placehold.co/1200x250/381318/ededed?text=SUA+IMAGEM+DE+TITULO+AQUI+(1200x250)" 
+                 src="figuras.png" 
                  alt="Título do Álbum" 
                  class="w-full max-h-48 sm:max-h-60 object-contain rounded-2xl border border-[#5a2228] shadow-2xl transition-all"
-                 onerror="this.src='https://placehold.co/1200x250/381318/ededed?text=TITULO+DO+ALBUM+2026'">
+                 onerror="this.src='https://placehold.co/1200x250/381318/ededed?text=ALBUM+DO+IPOG+2026'">
         </div>
     </div>
 
@@ -171,10 +171,10 @@
                     <i class="fa-solid fa-gear text-amber-400"></i> Configurações
                 </button>
                 <button onclick="openBatchImportModal()" class="bg-[#5a2228] hover:bg-[#6f2c34] border border-[#8c3842] text-amber-300 font-bold text-xs px-3 py-2 rounded-xl transition-all flex items-center gap-1.5 shadow">
-                    <i class="fa-solid fa-file-csv"></i> Colar Lista
+                    <i class="fa-solid fa-file-csv"></i> Importar Vários
                 </button>
-                <button onclick="openAddStickerModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3 py-2 rounded-xl transition-all shadow-md flex items-center gap-1.5">
-                    <i class="fa-solid fa-plus"></i> Add Número
+                <button onclick="resetToSpreadsheetData()" class="bg-rose-900/60 hover:bg-rose-800/80 border border-rose-500/40 text-rose-200 font-bold text-xs px-3 py-2 rounded-xl transition-all flex items-center gap-1.5 shadow" title="Restaurar dados da Planilha">
+                    <i class="fa-solid fa-rotate-left"></i> Reset Planilha
                 </button>
             </div>
         </section>
@@ -189,7 +189,6 @@
             </button>
         </div>
 
-        <!-- Dual Column Layout: Side by Side -->
         <section class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
             
             <!-- Column 1: PRECISO -->
@@ -201,7 +200,12 @@
                             Preciso (Faltando no meu Álbum)
                         </h3>
                     </div>
-                    <span id="badge-count-needed" class="text-xs font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">0</span>
+                    <div class="flex items-center gap-2">
+                        <span id="badge-count-needed" class="text-xs font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">0</span>
+                        <button onclick="openAddStickerModalFor('needed')" class="owner-btn-tab hidden bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 border border-rose-500/40 text-[11px] px-2.5 py-1 rounded-lg font-bold transition-all flex items-center gap-1">
+                            <i class="fa-solid fa-plus text-xs"></i> Add
+                        </button>
+                    </div>
                 </div>
 
                 <div id="container-needed" class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-5 lg:grid-cols-6 gap-2 min-h-[120px]">
@@ -222,7 +226,12 @@
                             Tenho para Troca (Repetidas)
                         </h3>
                     </div>
-                    <span id="badge-count-trade" class="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">0</span>
+                    <div class="flex items-center gap-2">
+                        <span id="badge-count-trade" class="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">0</span>
+                        <button onclick="openAddStickerModalFor('trade')" class="owner-btn-tab hidden bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-300 border border-emerald-500/40 text-[11px] px-2.5 py-1 rounded-lg font-bold transition-all flex items-center gap-1">
+                            <i class="fa-solid fa-plus text-xs"></i> Add
+                        </button>
+                    </div>
                 </div>
 
                 <div id="container-trade" class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-5 lg:grid-cols-6 gap-2 min-h-[120px]">
@@ -330,16 +339,16 @@
             <div class="space-y-3">
                 <div>
                     <label class="text-[10px] font-semibold text-[#ededed]/70 block mb-1">Seu WhatsApp (DDD + Número)</label>
-                    <input type="text" id="owner-phone-input" placeholder="Ex: 5562999998888" 
+                    <input type="text" id="owner-phone-input" placeholder="Ex: 5562998396026" 
                         class="w-full py-2 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] focus:outline-none focus:border-amber-400">
                     <span class="text-[9px] text-[#ededed]/50 block mt-1">Insira 55 + DDD + Seu Número (somente dígitos).</span>
                 </div>
 
                 <div>
                     <label class="text-[10px] font-semibold text-[#ededed]/70 block mb-1">Imagem/Banner de Título (URL ou Arquivo)</label>
-                    <input type="text" id="owner-banner-input" placeholder="Ex: titulo.png ou https://..." 
+                    <input type="text" id="owner-banner-input" placeholder="Ex: figuras.png ou https://..." 
                         class="w-full py-2 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] focus:outline-none focus:border-amber-400">
-                    <span class="text-[9px] text-[#ededed]/50 block mt-1">No GitHub, salve o arquivo como `titulo.png` na mesma pasta.</span>
+                    <span class="text-[9px] text-[#ededed]/50 block mt-1">No GitHub, salve o arquivo como `figuras.png` na mesma pasta.</span>
                 </div>
                 
                 <button onclick="saveOwnerSettings()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all mt-2">
@@ -392,7 +401,7 @@
         </div>
     </div>
 
-    <!-- Modal 4: Add New Single Sticker Number -->
+    <!-- Modal 4: Add New Single Sticker Number (Targeted) -->
     <div id="modal-add-sticker" class="fixed inset-0 bg-[#2b0e12]/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-[#381318] border border-[#5a2228] rounded-2xl max-w-xs w-full p-5 space-y-3 shadow-2xl relative">
             <button onclick="closeModal('modal-add-sticker')" class="absolute top-3 right-3 text-[#ededed]/60 hover:text-[#ededed]">
@@ -404,22 +413,22 @@
             <form onsubmit="handleSaveSticker(event)" class="space-y-3">
                 <div>
                     <label class="text-xs font-semibold text-[#ededed]/70">Número da Figurinha</label>
-                    <input type="text" id="add-number" required placeholder="Ex: 45, 102, A1..." class="w-full py-2 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] focus:outline-none focus:border-amber-400">
+                    <input type="text" id="add-number" required placeholder="Ex: 45, 102, 108..." class="w-full py-2 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] focus:outline-none focus:border-amber-400">
                 </div>
                 <div>
-                    <label class="text-xs font-semibold text-[#ededed]/70">Status Inicial</label>
-                    <select id="add-status" class="w-full py-2 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] focus:outline-none focus:border-amber-400">
-                        <option value="needed">Preciso (Faltando)</option>
-                        <option value="owned">Já Tenho (Colada)</option>
+                    <label class="text-xs font-semibold text-[#ededed]/70">Lista / Status</label>
+                    <select id="add-status" onchange="toggleAddQtyField()" class="w-full py-2 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] focus:outline-none focus:border-amber-400">
+                        <option value="needed">Preciso (Faltando no Álbum)</option>
+                        <option value="trade">Tenho para Troca (Repetida)</option>
                     </select>
                 </div>
-                <div>
-                    <label class="text-xs font-semibold text-[#ededed]/70">Repetidas (para troca)</label>
-                    <input type="number" id="add-duplicates" min="0" value="0" class="w-full py-2 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] focus:outline-none focus:border-amber-400">
+                <div id="wrapper-add-duplicates" class="hidden">
+                    <label class="text-xs font-semibold text-[#ededed]/70">Quantidade de Repetidas</label>
+                    <input type="number" id="add-duplicates" min="1" value="1" class="w-full py-2 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] focus:outline-none focus:border-amber-400">
                 </div>
 
                 <button type="submit" class="w-full py-2.5 bg-amber-400 hover:bg-amber-300 text-wine-950 font-bold text-xs rounded-xl shadow-md transition-all mt-1">
-                    Salvar Figurinha
+                    Salvar na Lista
                 </button>
             </form>
         </div>
@@ -434,24 +443,33 @@
 
             <div class="flex items-center gap-2">
                 <i class="fa-solid fa-file-csv text-amber-400 text-lg"></i>
-                <h3 class="text-base font-bold font-display text-[#ededed]">Importar da Planilha (Google Sheets)</h3>
+                <h3 class="text-base font-bold font-display text-[#ededed]">Importar Vários Números</h3>
             </div>
 
             <p class="text-xs text-[#ededed]/70">
-                Cole abaixo a lista com os números das suas figurinhas. Você pode colar apenas os números separados por vírgula ou linha por linha!
+                Cole a lista de números separados por vírgula, espaço ou linhas. Eles serão organizados e ordenados automaticamente.
             </p>
 
-            <div>
-                <textarea id="batch-input" rows="6" placeholder="Exemplo 1: 1, 2, 3, 4, 5, 12, 18&#10;&#10;Exemplo 2 (linha a linha):&#10;01&#10;02&#10;03" 
-                    class="w-full p-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] font-mono focus:outline-none focus:border-amber-400"></textarea>
+            <div class="space-y-2">
+                <div>
+                    <label class="text-[11px] font-semibold text-amber-300 block mb-1">Adicionar em qual lista?</label>
+                    <select id="batch-target-list" class="w-full py-2 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] focus:outline-none focus:border-amber-400">
+                        <option value="needed">Preciso (Faltando no Álbum)</option>
+                        <option value="trade">Tenho para Troca (Repetidas)</option>
+                    </select>
+                </div>
+                <div>
+                    <textarea id="batch-input" rows="5" placeholder="Exemplo: 1, 2, 7, 11, 14, 18, 19, 27, 30" 
+                        class="w-full p-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] font-mono focus:outline-none focus:border-amber-400"></textarea>
+                </div>
             </div>
 
             <div class="flex items-center justify-between gap-2 pt-1">
-                <button onclick="resetToDefaultAlbum()" class="text-[11px] text-rose-400 hover:text-rose-300 underline font-semibold">
-                    Restaurar Padrão (1 a 100)
+                <button onclick="resetToSpreadsheetData()" class="text-[11px] text-rose-400 hover:text-rose-300 underline font-semibold">
+                    Restaurar Dados Originais da Planilha
                 </button>
                 <button onclick="processBatchImport()" class="py-2.5 px-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-md">
-                    Importar Lista
+                    Importar e Ordenar
                 </button>
             </div>
         </div>
@@ -469,10 +487,10 @@
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // APP CONSTANTS & DEFAULTS (Altere aqui para mudar o padrão no GitHub)
+        // APP CONSTANTS & DEFAULTS
         window.PIN_CORRECT = "3141";
-        window.DEFAULT_OWNER_PHONE = "5562998396026"; // Altere para seu numero padrao
-        window.DEFAULT_BANNER_URL = "figuras.png";        // Altere para sua imagem de titulo no GitHub
+        window.DEFAULT_OWNER_PHONE = "5562998396026";
+        window.DEFAULT_BANNER_URL = "figuras.png";
 
         window.isOwnerMode = false;
         window.selectedStickerNum = null;
@@ -482,22 +500,50 @@
         window.tradeWants = [];  
         window.tradeOffers = []; 
 
-        function generateDefaultStickers() {
+        // Helper function: Natural numeric & alphabetical sort
+        window.sortStickers = function(list) {
+            return (list || []).sort((a, b) => 
+                a.num.localeCompare(b.num, undefined, { numeric: true, sensitivity: 'base' })
+            );
+        };
+
+        // Generates default sticker set matching the exact user spreadsheet screenshot
+        window.generateDefaultStickers = function() {
             const list = [];
-            const mockDuplicates = [
-                { num: "03", qty: 2 }, { num: "07", qty: 1 }, { num: "12", qty: 3 }, 
-                { num: "18", qty: 1 }, { num: "25", qty: 2 }, { num: "33", qty: 1 }, 
-                { num: "42", qty: 4 }, { num: "50", qty: 1 }, { num: "78", qty: 2 }
+            
+            // Numbers under "PRECISO" in spreadsheet screenshot
+            const spreadsheetNeeded = [
+                "1", "2", "7", "11", "14", "18", "19", "27", "30", "35", 
+                "41", "43", "47", "51", "54", "59", "60", "62", "71", "75", 
+                "79", "81", "90", "101", "104", "108", "112"
             ];
-            const mockNeeded = ["02", "05", "09", "14", "21", "28", "36", "41", "49", "57", "63", "80", "97"];
 
-            mockDuplicates.forEach(item => list.push({ num: item.num, status: 'owned', duplicates: item.qty }));
-            mockNeeded.forEach(num => list.push({ num: num, status: 'needed', duplicates: 0 }));
+            // Numbers under "TENHO" in spreadsheet screenshot with duplicates
+            const spreadsheetTrade = [
+                { num: "21", qty: 1 },
+                { num: "38", qty: 1 },
+                { num: "44", qty: 1 },
+                { num: "45", qty: 1 },
+                { num: "48", qty: 1 },
+                { num: "57", qty: 1 },
+                { num: "58", qty: 1 },
+                { num: "66", qty: 1 },
+                { num: "72", qty: 1 },
+                { num: "74", qty: 2 },
+                { num: "76", qty: 1 },
+                { num: "88", qty: 2 },
+                { num: "98", qty: 2 },
+                { num: "100", qty: 1 }
+            ];
 
-            return list;
-        }
+            spreadsheetNeeded.forEach(num => list.push({ num: num, status: 'needed', duplicates: 0 }));
+            spreadsheetTrade.forEach(item => list.push({ num: item.num, status: 'owned', duplicates: item.qty }));
 
-        window.stickers = JSON.parse(localStorage.getItem('firma_album_numbers_2026')) || generateDefaultStickers();
+            return window.sortStickers(list);
+        };
+
+        const storedData = localStorage.getItem('firma_album_numbers_v2');
+        window.stickers = storedData ? window.sortStickers(JSON.parse(storedData)) : window.generateDefaultStickers();
 
         // Cloud Storage Setup
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'firma-album-2026';
@@ -532,8 +578,8 @@
                                 localStorage.setItem('firma_album_banner_url', data.ownerBanner);
                             }
                             if (data.stickers && Array.isArray(data.stickers)) {
-                                window.stickers = data.stickers;
-                                localStorage.setItem('firma_album_numbers_2026', JSON.stringify(data.stickers));
+                                window.stickers = window.sortStickers(data.stickers);
+                                localStorage.setItem('firma_album_numbers_v2', JSON.stringify(window.stickers));
                             }
                             window.updateBannerUI();
                             window.renderStickers();
@@ -546,7 +592,8 @@
         }
 
         window.saveData = async function() {
-            localStorage.setItem('firma_album_numbers_2026', JSON.stringify(window.stickers));
+            window.stickers = window.sortStickers(window.stickers);
+            localStorage.setItem('firma_album_numbers_v2', JSON.stringify(window.stickers));
             localStorage.setItem('firma_album_owner_phone', window.ownerPhone);
             localStorage.setItem('firma_album_banner_url', window.ownerBanner);
 
@@ -583,7 +630,7 @@
                 if (window.ownerBanner && window.ownerBanner.trim() !== '') {
                     bannerImg.src = window.ownerBanner;
                 } else {
-                    bannerImg.src = 'https://placehold.co/1200x250/381318/ededed?text=TITULO+DO+ALBUM+2026';
+                    bannerImg.src = 'figuras.png';
                 }
             }
         }
@@ -613,7 +660,7 @@
             } catch(e) {}
         }
 
-        // --- RENDER SIDE-BY-SIDE STICKERS ---
+        // --- RENDER SIDE-BY-SIDE STICKERS WITH NUMERICAL SORTING ---
         function renderStickers() {
             const containerNeeded = document.getElementById('container-needed');
             const containerTrade = document.getElementById('container-trade');
@@ -624,6 +671,11 @@
 
             containerNeeded.innerHTML = '';
             containerTrade.innerHTML = '';
+
+            // Ensure dataset is always sorted before rendering
+            if (typeof window.sortStickers === 'function') {
+                window.stickers = window.sortStickers(window.stickers);
+            }
 
             const searchFiltered = (window.stickers || []).filter(s => s.num.toLowerCase().includes(searchVal));
 
@@ -640,11 +692,15 @@
             neededList.forEach(s => {
                 const inOffers = window.tradeOffers.includes(s.num);
                 const selectedRing = inOffers ? "ring-2 ring-amber-400 bg-amber-950/70 scale-105" : "";
+                
+                // Show trash icon directly in Owner Mode
+                const deleteBtnHtml = window.isOwnerMode ? 
+                    `<button onclick="event.stopPropagation(); quickDeleteSticker('${s.num}')" title="Excluir" class="absolute -top-1.5 -right-1.5 bg-rose-600 hover:bg-rose-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center shadow z-10"><i class="fa-solid fa-xmark"></i></button>` : '';
 
                 const cardHtml = `
                     <div onclick="handleCardClick('${s.num}', 'needed')" 
                         class="sticker-card relative bg-[#2b0e12] border border-rose-500/60 rounded-xl p-1.5 h-16 flex flex-col items-center justify-center cursor-pointer select-none shadow-md ${selectedRing}">
-                        
+                        ${deleteBtnHtml}
                         <span class="text-[9px] text-rose-300/60 font-bold leading-none">#</span>
                         <span class="text-base font-black font-display text-rose-200 tracking-tight leading-none my-0.5">${s.num}</span>
 
@@ -661,6 +717,9 @@
                 const inWants = window.tradeWants.includes(s.num);
                 const selectedRing = inWants ? "ring-2 ring-emerald-400 bg-emerald-950/70 scale-105" : "";
 
+                const deleteBtnHtml = window.isOwnerMode ? 
+                    `<button onclick="event.stopPropagation(); quickDeleteSticker('${s.num}')" title="Excluir" class="absolute -bottom-1.5 -right-1.5 bg-rose-600 hover:bg-rose-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center shadow z-10"><i class="fa-solid fa-xmark"></i></button>` : '';
+
                 const cardHtml = `
                     <div onclick="handleCardClick('${s.num}', 'trade')" 
                         class="sticker-card relative bg-[#2b0e12] border border-emerald-500/60 rounded-xl p-1.5 h-16 flex flex-col items-center justify-center cursor-pointer select-none shadow-md ${selectedRing}">
@@ -668,6 +727,7 @@
                         <span class="absolute -top-1.5 -right-1.5 bg-emerald-500 text-slate-950 text-[9px] font-black px-1.5 py-0.2 rounded-full border border-slate-900 shadow">
                             x${s.duplicates}
                         </span>
+                        ${deleteBtnHtml}
 
                         <span class="text-[9px] text-emerald-300/60 font-bold leading-none">#</span>
                         <span class="text-base font-black font-display text-emerald-200 tracking-tight leading-none my-0.5">${s.num}</span>
@@ -722,7 +782,7 @@
             if (pin === window.PIN_CORRECT) {
                 window.isOwnerMode = true;
                 updateOwnerUI();
-                showToast("Modo Dono ativado com sucesso! 🔑", "success");
+                showToast("Modo Dono ativado! 🔑", "success");
                 if (typeof confetti === 'function') confetti({ particleCount: 50, spread: 60 });
             } else if (pin !== null) {
                 showToast("PIN incorreto!", "error");
@@ -733,6 +793,7 @@
             const ownerActions = document.getElementById('owner-actions');
             const badgeVisitor = document.getElementById('badge-visitor');
             const btnSwitch = document.getElementById('btn-switch-owner');
+            const ownerTabBtns = document.querySelectorAll('.owner-btn-tab');
 
             if (window.isOwnerMode) {
                 ownerActions.classList.remove('hidden');
@@ -740,12 +801,14 @@
                 badgeVisitor.className = "text-xs px-2.5 py-1 rounded-lg font-bold bg-amber-400 text-wine-950 shadow";
                 badgeVisitor.innerHTML = `<i class="fa-solid fa-crown mr-1"></i> Dono do Álbum`;
                 btnSwitch.innerHTML = `<i class="fa-solid fa-right-from-bracket mr-1"></i> Sair`;
+                ownerTabBtns.forEach(btn => btn.classList.remove('hidden'));
             } else {
                 ownerActions.classList.add('hidden');
                 ownerActions.classList.remove('flex');
                 badgeVisitor.className = "text-xs px-2.5 py-1 rounded-lg font-bold bg-[#381318] text-[#ededed]/80 border border-[#5a2228]";
                 badgeVisitor.innerHTML = `<i class="fa-solid fa-eye mr-1"></i> Visitante`;
                 btnSwitch.innerHTML = `<i class="fa-solid fa-lock text-amber-400/80 mr-1"></i> Sou o Dono`;
+                ownerTabBtns.forEach(btn => btn.classList.add('hidden'));
             }
             renderStickers();
         }
@@ -847,27 +910,44 @@
             showToast(`Figurinha #${sticker.num} atualizada!`, "success");
         }
 
-        function deleteSticker() {
-            if (!window.selectedStickerNum) return;
-            window.stickers = window.stickers.filter(s => s.num !== window.selectedStickerNum);
+        function quickDeleteSticker(num) {
+            window.stickers = window.stickers.filter(s => s.num !== num);
             if (typeof window.saveData === 'function') window.saveData();
-            closeModal('modal-sticker-detail');
             renderStickers();
-            showToast("Figurinha removida!", "info");
+            showToast(`Figurinha #${num} removida!`, "info");
         }
 
-        function openAddStickerModal() {
+        function deleteSticker() {
+            if (!window.selectedStickerNum) return;
+            quickDeleteSticker(window.selectedStickerNum);
+            closeModal('modal-sticker-detail');
+        }
+
+        // Open Add Modal specifically targeted to 'needed' or 'trade' tab
+        function openAddStickerModalFor(targetList) {
             document.getElementById('add-number').value = '';
-            document.getElementById('add-status').value = 'needed';
-            document.getElementById('add-duplicates').value = '0';
+            const statusSelect = document.getElementById('add-status');
+            statusSelect.value = targetList === 'trade' ? 'trade' : 'needed';
+            toggleAddQtyField();
             openModal('modal-add-sticker');
+        }
+
+        function toggleAddQtyField() {
+            const status = document.getElementById('add-status').value;
+            const wrapper = document.getElementById('wrapper-add-duplicates');
+            if (status === 'trade') {
+                wrapper.classList.remove('hidden');
+            } else {
+                wrapper.classList.add('hidden');
+            }
         }
 
         function handleSaveSticker(e) {
             e.preventDefault();
-            const num = document.getElementById('add-number').value.trim().padStart(2, '0');
-            const status = document.getElementById('add-status').value;
-            const duplicates = parseInt(document.getElementById('add-duplicates').value) || 0;
+            const num = document.getElementById('add-number').value.trim();
+            const selectedType = document.getElementById('add-status').value;
+            const duplicates = selectedType === 'trade' ? Math.max(1, parseInt(document.getElementById('add-duplicates').value) || 1) : 0;
+            const status = selectedType === 'trade' ? 'owned' : 'needed';
 
             if (!num) return;
 
@@ -879,11 +959,13 @@
                 window.stickers.push({ num, status, duplicates });
             }
 
-            window.stickers.sort((a, b) => a.num.localeCompare(b.num, undefined, { numeric: true }));
+            if (typeof window.sortStickers === 'function') {
+                window.stickers = window.sortStickers(window.stickers);
+            }
             if (typeof window.saveData === 'function') window.saveData();
             closeModal('modal-add-sticker');
             renderStickers();
-            showToast(`Figurinha #${num} salva com sucesso!`, "success");
+            showToast(`Figurinha #${num} salva na lista!`, "success");
         }
 
         function openBatchImportModal() {
@@ -893,42 +975,57 @@
 
         function processBatchImport() {
             const raw = document.getElementById('batch-input').value;
+            const targetList = document.getElementById('batch-target-list').value;
+
             if (!raw.trim()) {
-                showToast("Cole o texto ou lista da planilha!", "error");
+                showToast("Cole os números que deseja importar!", "error");
                 return;
             }
 
-            const items = raw.split(/[\n,;\t]+/).map(item => item.trim()).filter(Boolean);
+            // Extract alphanumeric/numeric tokens
+            const items = raw.split(/[\n,;\t\s]+/).map(item => item.trim()).filter(Boolean);
             let addedCount = 0;
 
             items.forEach(item => {
-                const num = item.replace(/[^a-zA-Z0-9]/g, '').padStart(2, '0');
+                const num = item.replace(/[^a-zA-Z0-9]/g, '');
                 if (num) {
+                    const status = targetList === 'trade' ? 'owned' : 'needed';
+                    const duplicates = targetList === 'trade' ? 1 : 0;
+
                     const exists = window.stickers.find(s => s.num === num);
-                    if (!exists) {
-                        window.stickers.push({ num: num, status: 'needed', duplicates: 0 });
-                        addedCount++;
+                    if (exists) {
+                        exists.status = status;
+                        if (targetList === 'trade') {
+                            exists.duplicates = (exists.duplicates || 0) + 1;
+                        } else {
+                            exists.duplicates = 0;
+                        }
+                    } else {
+                        window.stickers.push({ num: num, status: status, duplicates: duplicates });
                     }
+                    addedCount++;
                 }
             });
 
-            window.stickers.sort((a, b) => a.num.localeCompare(b.num, undefined, { numeric: true }));
-            if (typeof window.saveData === 'function') window.saveData();
-            closeModal('modal-batch-import');
-            renderStickers();
-            showToast(`${addedCount} novas figurinhas importadas!`, "success");
-        }
-
-        function resetToDefaultAlbum() {
-            window.stickers = [];
-            for (let i = 1; i <= 100; i++) {
-                const num = i.toString().padStart(2, '0');
-                window.stickers.push({ num: num, status: 'needed', duplicates: 0 });
+            if (typeof window.sortStickers === 'function') {
+                window.stickers = window.sortStickers(window.stickers);
             }
             if (typeof window.saveData === 'function') window.saveData();
             closeModal('modal-batch-import');
             renderStickers();
-            showToast("Álbum restaurado (1 a 100)!", "info");
+            showToast(`${addedCount} números importados e ordenados!`, "success");
+        }
+
+        function resetToSpreadsheetData() {
+            if (confirm("Deseja restaurar as figurinhas para a lista original da planilha?")) {
+                if (typeof window.generateDefaultStickers === 'function') {
+                    window.stickers = window.generateDefaultStickers();
+                }
+                if (typeof window.saveData === 'function') window.saveData();
+                closeModal('modal-batch-import');
+                renderStickers();
+                showToast("Lista restaurada da planilha com sucesso!", "info");
+            }
         }
 
         function openOwnerSettingsModal() {
