@@ -22,13 +22,13 @@
                         wine: {
                             950: '#2b0e12',
                             900: '#381318',
-                            800: '#481a1f', // Primary background requested
+                            800: '#481a1f', // Primary requested background
                             700: '#5a2228',
                             600: '#6f2c34',
                             500: '#8c3842',
                             400: '#ab4954',
                         },
-                        lightText: '#ededed', // Text color requested
+                        lightText: '#ededed',
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
@@ -45,17 +45,15 @@
             color: #ededed;
         }
 
-        /* Compact Sticker Hover Effect */
         .sticker-card {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             background-image: linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0) 60%);
         }
         .sticker-card:hover {
-            transform: translateY(-3px) scale(1.05);
+            transform: translateY(-2px) scale(1.04);
             box-shadow: 0 10px 20px -5px rgba(0,0,0,0.5);
         }
 
-        /* Custom Scrollbar for Wine theme */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -75,22 +73,22 @@
 
 <body class="min-h-screen font-sans flex flex-col antialiased selection:bg-amber-500 selection:text-slate-950">
 
-    <!-- Espaço Superior para Imagem de Título / Banner Header -->
+    <!-- Banner Header Area -->
     <div id="banner-container" class="w-full bg-[#2b0e12] border-b border-[#5a2228] px-3 py-3 flex justify-center items-center">
         <div class="max-w-7xl w-full flex justify-center">
             <img id="header-banner-img" 
-                 src="https://placehold.co/1200x250/381318/ededed?text=figuras.png" 
+                 src="https://placehold.co/1200x250/381318/ededed?text=SUA+IMAGEM+DE+TITULO+AQUI+(1200x250)" 
                  alt="Título do Álbum" 
                  class="w-full max-h-48 sm:max-h-60 object-contain rounded-2xl border border-[#5a2228] shadow-2xl transition-all"
                  onerror="this.src='https://placehold.co/1200x250/381318/ededed?text=TITULO+DO+ALBUM+2026'">
         </div>
     </div>
 
-    <!-- Top Header -->
+    <!-- Top Bar Navigation -->
     <header class="sticky top-0 z-40 bg-[#381318]/95 backdrop-blur-md border-b border-[#5a2228] px-4 py-3 shadow-2xl">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
             
-            <!-- Logo & Title -->
+            <!-- Title Branding -->
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-amber-400 text-wine-950 font-black text-xl flex items-center justify-center shadow-lg shadow-amber-500/20 transform -rotate-3">
                     🏆
@@ -99,22 +97,20 @@
                     <h1 class="text-lg font-display font-black text-[#ededed] tracking-wide flex items-center gap-2">
                         ÁLBUM DA FIRMA <span class="text-[10px] bg-amber-400/20 text-amber-300 border border-amber-400/30 px-2 py-0.5 rounded-full font-sans font-bold">EDIÇÃO 2026</span>
                     </h1>
-                    <p class="text-[11px] text-[#ededed]/70">Central de Troca de Figurinhas (Somente Números)</p>
+                    <p class="text-[11px] text-[#ededed]/70">Central de Troca de Figurinhas</p>
                 </div>
             </div>
 
-            <!-- Controls -->
+            <!-- Top Actions & Owner Mode Switch -->
             <div class="flex items-center gap-2.5 w-full sm:w-auto justify-end">
-                <!-- Trade Proposal Button -->
                 <button onclick="toggleTradeModal()" class="relative bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2 px-3.5 rounded-xl border border-emerald-400 flex items-center gap-2 transition-all shadow-md">
                     <i class="fa-solid fa-paper-plane text-amber-300"></i>
                     <span>SOLICITAR TROCA</span>
                     <span id="trade-counter-badge" class="hidden bg-amber-400 text-wine-950 text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-black">0</span>
                 </button>
 
-                <!-- Mode Indicator / Switcher -->
                 <div id="mode-badge-container" class="bg-[#2b0e12] border border-[#5a2228] rounded-xl p-1 flex items-center gap-1">
-                    <span id="badge-visitor" class="text-xs px-2.5 py-1 rounded-lg font-bold bg-amber-400 text-wine-950 shadow">
+                    <span id="badge-visitor" class="text-xs px-2.5 py-1 rounded-lg font-bold bg-[#381318] text-[#ededed]/80 border border-[#5a2228]">
                         <i class="fa-solid fa-eye mr-1"></i> Visitante
                     </span>
                     <button onclick="requestOwnerAccess()" id="btn-switch-owner" class="text-xs px-2.5 py-1 rounded-lg text-[#ededed]/70 hover:text-[#ededed] font-semibold transition-all hover:bg-[#381318]">
@@ -144,16 +140,13 @@
                     </p>
                 </div>
 
-                <!-- Stats Grid -->
                 <div class="flex items-center gap-3 w-full md:w-auto justify-center">
-                    <!-- Faltando Stat -->
                     <div class="bg-[#2b0e12]/90 border border-rose-500/40 rounded-xl px-4 py-2 text-center min-w-[100px]">
                         <span class="text-[10px] text-rose-400 font-bold uppercase tracking-wider block">Preciso</span>
                         <div id="stat-needed" class="text-2xl font-black text-rose-400 font-display leading-tight">0</div>
                         <span class="text-[9px] text-[#ededed]/60">figurinhas</span>
                     </div>
 
-                    <!-- Repetidas Stat -->
                     <div class="bg-[#2b0e12]/90 border border-emerald-500/40 rounded-xl px-4 py-2 text-center min-w-[100px]">
                         <span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block">Pra Troca</span>
                         <div id="stat-trade" class="text-2xl font-black text-emerald-400 font-display leading-tight">0</div>
@@ -163,22 +156,21 @@
             </div>
         </section>
 
-        <!-- Search Bar & Controls -->
+        <!-- Search & Owner Controls -->
         <section class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             
-            <!-- Search Bar -->
             <div class="relative flex-1">
                 <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-[#ededed]/50 text-xs"></i>
                 <input type="text" id="search-input" oninput="renderStickers()" placeholder="Buscar número (ex: 5, 12, 45)..." 
                     class="w-full pl-9 pr-4 py-2 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] placeholder-[#ededed]/40 focus:outline-none focus:border-amber-400 transition-all">
             </div>
 
-            <!-- Owner Action Buttons -->
+            <!-- Owner Action Buttons (Visible only in owner mode) -->
             <div id="owner-actions" class="hidden items-center gap-2">
-                <button onclick="openOwnerSettingsModal()" class="bg-[#5a2228] hover:bg-[#6f2c34] border border-[#8c3842] text-amber-300 font-bold text-xs px-3 py-2 rounded-xl transition-all flex items-center gap-1.5">
+                <button onclick="openOwnerSettingsModal()" class="bg-[#5a2228] hover:bg-[#6f2c34] border border-[#8c3842] text-amber-300 font-bold text-xs px-3 py-2 rounded-xl transition-all flex items-center gap-1.5 shadow">
                     <i class="fa-solid fa-gear text-amber-400"></i> Configurações
                 </button>
-                <button onclick="openBatchImportModal()" class="bg-[#5a2228] hover:bg-[#6f2c34] border border-[#8c3842] text-amber-300 font-bold text-xs px-3 py-2 rounded-xl transition-all flex items-center gap-1.5">
+                <button onclick="openBatchImportModal()" class="bg-[#5a2228] hover:bg-[#6f2c34] border border-[#8c3842] text-amber-300 font-bold text-xs px-3 py-2 rounded-xl transition-all flex items-center gap-1.5 shadow">
                     <i class="fa-solid fa-file-csv"></i> Colar Lista
                 </button>
                 <button onclick="openAddStickerModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3 py-2 rounded-xl transition-all shadow-md flex items-center gap-1.5">
@@ -187,7 +179,7 @@
             </div>
         </section>
 
-        <!-- Floating Sticky Bar for Quick Request on Mobile/Desktop -->
+        <!-- Floating Sticky Bar for Quick Request -->
         <div id="floating-trade-bar" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-30 hidden bg-gradient-to-r from-emerald-600 to-emerald-700 border border-emerald-400 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-4 animate-bounce">
             <div class="text-xs">
                 <span id="floating-cart-count" class="font-black text-amber-300 text-sm">0</span> figurinhas selecionadas
@@ -197,10 +189,10 @@
             </button>
         </div>
 
-        <!-- LADO A LADO: Dual Column Layout -->
+        <!-- Dual Column Layout: Side by Side -->
         <section class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
             
-            <!-- Left Column: PRECISO / FALTANDO -->
+            <!-- Column 1: PRECISO -->
             <div class="bg-[#381318]/70 border border-rose-500/30 rounded-2xl p-4 space-y-3 shadow-lg">
                 <div class="flex items-center justify-between border-b border-[#5a2228] pb-2.5">
                     <div class="flex items-center gap-2">
@@ -212,9 +204,8 @@
                     <span id="badge-count-needed" class="text-xs font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">0</span>
                 </div>
 
-                <!-- Mini Stickers Container -->
                 <div id="container-needed" class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-5 lg:grid-cols-6 gap-2 min-h-[120px]">
-                    <!-- Dynamic mini sticker cards injected here -->
+                    <!-- Mini cards injected dynamically -->
                 </div>
 
                 <p id="empty-needed" class="hidden text-xs text-[#ededed]/50 text-center py-6 italic">
@@ -222,7 +213,7 @@
                 </p>
             </div>
 
-            <!-- Right Column: TENHO PARA TROCA / REPETIDAS -->
+            <!-- Column 2: TENHO PARA TROCA -->
             <div class="bg-[#381318]/70 border border-emerald-500/30 rounded-2xl p-4 space-y-3 shadow-lg">
                 <div class="flex items-center justify-between border-b border-[#5a2228] pb-2.5">
                     <div class="flex items-center gap-2">
@@ -234,9 +225,8 @@
                     <span id="badge-count-trade" class="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">0</span>
                 </div>
 
-                <!-- Mini Stickers Container -->
                 <div id="container-trade" class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-5 lg:grid-cols-6 gap-2 min-h-[120px]">
-                    <!-- Dynamic mini sticker cards injected here -->
+                    <!-- Mini cards injected dynamically -->
                 </div>
 
                 <p id="empty-trade" class="hidden text-xs text-[#ededed]/50 text-center py-6 italic">
@@ -248,7 +238,7 @@
 
     </main>
 
-    <!-- Modal 2: Trade Proposal Request Modal -->
+    <!-- Modal 1: Trade Request Modal -->
     <div id="modal-trade" class="fixed inset-0 bg-[#2b0e12]/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-[#381318] border border-[#5a2228] rounded-2xl max-w-md w-full p-5 space-y-4 shadow-2xl relative flex flex-col max-h-[90vh]">
             
@@ -285,9 +275,46 @@
                     </div>
                 </div>
 
-    <!-- Modal: Owner Settings (Set WhatsApp Phone & Banner Image URL) -->
+                <!-- Wants Summary -->
+                <div class="bg-[#2b0e12] p-3 rounded-xl border border-[#5a2228] space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">2. Figurinhas que você quer</span>
+                        <span id="badge-wants-qty" class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">0 quer</span>
+                    </div>
+                    <div id="trade-wants-list" class="space-y-1 max-h-32 overflow-y-auto pr-1">
+                        <!-- Wants injected -->
+                    </div>
+                </div>
+
+                <!-- Offers Summary -->
+                <div class="bg-[#2b0e12] p-3 rounded-xl border border-[#5a2228] space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold text-amber-300 uppercase tracking-wider">3. Figurinhas que você tem para me dar</span>
+                        <span id="badge-offers-qty" class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-bold">0 tem</span>
+                    </div>
+                    <div id="trade-offers-list" class="space-y-1 max-h-32 overflow-y-auto pr-1">
+                        <!-- Offers injected -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Submit Buttons -->
+            <div class="pt-2 border-t border-[#5a2228] grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <button onclick="sendWhatsAppTrade()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> Enviar via WhatsApp
+                </button>
+                <button onclick="copyTradeText()" class="w-full py-2.5 bg-[#5a2228] hover:bg-[#6f2c34] text-[#ededed] font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-copy"></i> Copiar Proposta
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal 2: Owner Settings -->
     <div id="modal-owner-settings" class="fixed inset-0 bg-[#2b0e12]/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-[#381318] border border-[#5a2228] rounded-2xl max-w-xs w-full p-5 space-y-3 shadow-2xl relative">
+        <div class="bg-[#381318] border border-[#5a2228] rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl relative">
             <button onclick="closeModal('modal-owner-settings')" class="absolute top-3 right-3 text-[#ededed]/60 hover:text-[#ededed]">
                 <i class="fa-solid fa-xmark"></i>
             </button>
@@ -297,51 +324,26 @@
             </h3>
 
             <p class="text-xs text-[#ededed]/70">
-                Configure o WhatsApp para receber as trocas e altere a imagem de título do álbum.
+                Configure o WhatsApp para receber as propostas de troca e a imagem de título.
             </p>
 
-            <div class="space-y-2.5">
+            <div class="space-y-3">
                 <div>
-                    <label class="text-[10px] font-semibold text-[#ededed]/70 block mb-0.5">Seu WhatsApp (DDD + Número)</label>
+                    <label class="text-[10px] font-semibold text-[#ededed]/70 block mb-1">Seu WhatsApp (DDD + Número)</label>
                     <input type="text" id="owner-phone-input" placeholder="Ex: 5562999998888" 
-                        class="w-full py-1.5 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] focus:outline-none focus:border-amber-400">
+                        class="w-full py-2 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] focus:outline-none focus:border-amber-400">
+                    <span class="text-[9px] text-[#ededed]/50 block mt-1">Insira 55 + DDD + Seu Número (somente dígitos).</span>
                 </div>
 
                 <div>
-                    <label class="text-[10px] font-semibold text-[#ededed]/70 block mb-0.5">Imagem/Banner de Título (URL ou Arquivo)</label>
+                    <label class="text-[10px] font-semibold text-[#ededed]/70 block mb-1">Imagem/Banner de Título (URL ou Arquivo)</label>
                     <input type="text" id="owner-banner-input" placeholder="Ex: titulo.png ou https://..." 
-                        class="w-full py-1.5 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] focus:outline-none focus:border-amber-400">
-                    <span class="text-[9px] text-[#ededed]/50 block mt-0.5">No GitHub, coloque `titulo.png` e suba a imagem na mesma pasta.</span>
+                        class="w-full py-2 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] focus:outline-none focus:border-amber-400">
+                    <span class="text-[9px] text-[#ededed]/50 block mt-1">No GitHub, salve o arquivo como `titulo.png` na mesma pasta.</span>
                 </div>
                 
-                <button onclick="saveOwnerSettings()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all mt-1">
+                <button onclick="saveOwnerSettings()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all mt-2">
                     Salvar Configurações
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal: Owner Settings (Set WhatsApp Phone) -->
-    <div id="modal-owner-settings" class="fixed inset-0 bg-[#2b0e12]/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-[#381318] border border-[#5a2228] rounded-2xl max-w-xs w-full p-5 space-y-3 shadow-2xl relative">
-            <button onclick="closeModal('modal-owner-settings')" class="absolute top-3 right-3 text-[#ededed]/60 hover:text-[#ededed]">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-
-            <h3 class="text-base font-bold font-display text-[#ededed] flex items-center gap-2">
-                <i class="fa-brands fa-whatsapp text-emerald-400"></i> Seu Número de WhatsApp
-            </h3>
-
-            <p class="text-xs text-[#ededed]/70">
-                Cadastre seu número com DDD (ex: 5511999999999). As propostas de troca serão enviadas direto para o seu WhatsApp!
-            </p>
-
-            <div class="space-y-2">
-                <input type="text" id="owner-phone-input" placeholder="Ex: 5562999998888" 
-                    class="w-full py-2 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] focus:outline-none focus:border-amber-400">
-                
-                <button onclick="saveOwnerPhone()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all">
-                    Salvar Telefone
                 </button>
             </div>
         </div>
@@ -354,7 +356,6 @@
                 <i class="fa-solid fa-xmark"></i>
             </button>
 
-            <!-- Card Big Number Preview -->
             <div class="flex justify-center py-1">
                 <div id="modal-card-display" class="w-28 h-36 rounded-xl border-2 border-amber-400 bg-[#2b0e12] flex flex-col items-center justify-center shadow-xl">
                     <span class="text-[10px] text-[#ededed]/60 font-bold uppercase tracking-widest">FIGURINHA</span>
@@ -363,25 +364,10 @@
                 </div>
             </div>
 
-            <!-- Actions depending on mode -->
-            <div id="modal-visitor-actions" class="space-y-2">
-                <p class="text-xs text-center text-[#ededed]/70">Adicionar figurinha na sua proposta de troca:</p>
-                <div class="grid grid-cols-2 gap-2">
-                    <button id="btn-action-want" onclick="toggleTradeWantFromModal()" class="py-2 px-2 bg-emerald-500 text-slate-950 font-bold text-xs rounded-xl transition-all">
-                        Quero essa!
-                    </button>
-                    <button id="btn-action-offer" onclick="toggleTradeOfferFromModal()" class="py-2 px-2 bg-amber-400 text-slate-950 font-bold text-xs rounded-xl transition-all">
-                        Tenho p/ te dar
-                    </button>
-                </div>
-            </div>
-
-            <!-- Owner Quick Controls inside modal -->
-            <div id="modal-owner-controls" class="hidden border-t border-[#5a2228] pt-3 space-y-3">
+            <div id="modal-owner-controls" class="border-t border-[#5a2228] pt-3 space-y-3">
                 <label class="text-[11px] font-bold text-amber-300 uppercase tracking-wider block text-center">Editar Status (Dono)</label>
                 
                 <div class="grid grid-cols-2 gap-2">
-                    <!-- Duplicates Counter -->
                     <div class="bg-[#2b0e12] p-2 rounded-xl border border-[#5a2228] text-center">
                         <span class="text-[10px] text-[#ededed]/60 block mb-1">Qtd Repetidas</span>
                         <div class="flex items-center justify-center gap-2">
@@ -391,11 +377,10 @@
                         </div>
                     </div>
 
-                    <!-- Status Toggle -->
                     <div class="bg-[#2b0e12] p-2 rounded-xl border border-[#5a2228] text-center flex flex-col justify-between">
                         <span class="text-[10px] text-[#ededed]/60 block mb-1">Status no Álbum</span>
                         <button id="modal-btn-toggle-owned" onclick="toggleStickerStatus()" class="w-full py-1 px-1 text-[11px] font-bold rounded-lg transition-all">
-                            <!-- Injected -->
+                            <!-- Toggle label injected -->
                         </button>
                     </div>
                 </div>
@@ -482,11 +467,8 @@
         // --- CONSTANTS & STATE ---
         const PIN_CORRECT = "3141";
         
-        // --------------------------------------------------------------------------
-        // CONFIGURE SEU NÚMERO AQUI (Código do País 55 + DDD + Seu Número)
-        // Exemplo para Goiás (62): "5562999998888"
-        // --------------------------------------------------------------------------
-        const DEFAULT_OWNER_PHONE = "5562998396026"; 
+        // WhatsApp Configuration (Country Code 55 + DDD + Phone)
+        const DEFAULT_OWNER_PHONE = "5562999998888"; 
 
         let isOwnerMode = false;
         let selectedStickerNum = null;
@@ -497,18 +479,16 @@
         let tradeWants = [];  // Numbers visitor wants from owner duplicates
         let tradeOffers = []; // Numbers visitor offers to owner needed list
 
-        // Default Sample Sticker Data (Only Needed & Duplicate items)
+        // Default Sample Sticker Data
         function generateDefaultStickers() {
             const list = [];
             
-            // Sample duplicates (Tenho pra troca)
             const mockDuplicates = [
                 { num: "03", qty: 2 }, { num: "07", qty: 1 }, { num: "12", qty: 3 }, 
                 { num: "18", qty: 1 }, { num: "25", qty: 2 }, { num: "33", qty: 1 }, 
                 { num: "42", qty: 4 }, { num: "50", qty: 1 }, { num: "78", qty: 2 }
             ];
 
-            // Sample needed (Preciso)
             const mockNeeded = ["02", "05", "09", "14", "21", "28", "36", "41", "49", "57", "63", "80", "97"];
 
             mockDuplicates.forEach(item => {
@@ -563,21 +543,18 @@
             containerNeeded.innerHTML = '';
             containerTrade.innerHTML = '';
 
-            // Filter out stickers matching search query
             const searchFiltered = stickers.filter(s => s.num.toLowerCase().includes(searchVal));
 
-            // Separate into "Preciso" and "Pra Troca"
             const neededList = searchFiltered.filter(s => s.status === 'needed');
             const tradeList = searchFiltered.filter(s => s.duplicates > 0);
 
-            // Toggle empty states
             document.getElementById('empty-needed').classList.toggle('hidden', neededList.length > 0);
             document.getElementById('empty-trade').classList.toggle('hidden', tradeList.length > 0);
 
             document.getElementById('badge-count-needed').innerText = neededList.length;
             document.getElementById('badge-count-trade').innerText = tradeList.length;
 
-            // Render NEEDED Stickers (Rose Card Style)
+            // Render NEEDED Stickers (Rose Cards)
             neededList.forEach(s => {
                 const inOffers = tradeOffers.includes(s.num);
                 const selectedRing = inOffers ? "ring-2 ring-amber-400 bg-amber-950/70 scale-105" : "";
@@ -597,7 +574,7 @@
                 containerNeeded.insertAdjacentHTML('beforeend', cardHtml);
             });
 
-            // Render TRADE Stickers (Emerald Card Style)
+            // Render TRADE Stickers (Emerald Cards)
             tradeList.forEach(s => {
                 const inWants = tradeWants.includes(s.num);
                 const selectedRing = inWants ? "ring-2 ring-emerald-400 bg-emerald-950/70 scale-105" : "";
@@ -695,7 +672,6 @@
             playSound('click');
             selectedStickerNum = num;
 
-            // In Visitor mode, clicking directly toggles selection for fast trade building!
             if (!isOwnerMode) {
                 if (type === 'needed') {
                     toggleTradeOffer(num);
@@ -705,7 +681,6 @@
                 return;
             }
 
-            // In Owner mode, open editor modal
             const sticker = stickers.find(s => s.num === num);
             if (!sticker) return;
 
@@ -723,8 +698,6 @@
                 badge.innerText = "Já Tenho / Colada";
             }
 
-            document.getElementById('modal-visitor-actions').classList.add('hidden');
-            document.getElementById('modal-owner-controls').classList.remove('hidden');
             document.getElementById('modal-dup-count').innerText = sticker.duplicates || 0;
 
             const btnStatus = document.getElementById('modal-btn-toggle-owned');
@@ -759,16 +732,6 @@
             }
             renderStickers();
             updateTradeDrawer();
-        }
-
-        function toggleTradeWantFromModal() {
-            if (selectedStickerNum) toggleTradeWant(selectedStickerNum);
-            closeModal('modal-sticker-detail');
-        }
-
-        function toggleTradeOfferFromModal() {
-            if (selectedStickerNum) toggleTradeOffer(selectedStickerNum);
-            closeModal('modal-sticker-detail');
         }
 
         function adjustRepetidas(delta) {
@@ -1015,11 +978,13 @@
         }
 
         function openModal(id) {
-            document.getElementById(id).classList.remove('hidden');
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('hidden');
         }
 
         function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
+            const el = document.getElementById(id);
+            if (el) el.classList.add('hidden');
         }
 
         function showToast(text, type = 'info') {
@@ -1041,10 +1006,11 @@
             }, 3000);
         }
 
-        // Initialize on load
+        // Initialize on page load
         window.onload = function() {
             if (ownerBanner) {
-                document.getElementById('header-banner-img').src = ownerBanner;
+                const bannerImg = document.getElementById('header-banner-img');
+                if (bannerImg) bannerImg.src = ownerBanner;
             }
             renderStickers();
         };
