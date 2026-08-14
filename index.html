@@ -22,7 +22,7 @@
                         wine: {
                             950: '#2b0e12',
                             900: '#381318',
-                            800: '#481a1f', // Primary requested background
+                            800: '#481a1f',
                             700: '#5a2228',
                             600: '#6f2c34',
                             500: '#8c3842',
@@ -324,7 +324,7 @@
             </h3>
 
             <p class="text-xs text-[#ededed]/70">
-                Configure o WhatsApp para receber as propostas de troca e a imagem de título.
+                Configure seu WhatsApp e imagem de título. Alterações são salvas em tempo real para todos os visitantes!
             </p>
 
             <div class="space-y-3">
@@ -463,50 +463,129 @@
         <div id="toast-message">Mensagem</div>
     </div>
 
-    <script>
-        // --- CONSTANTS & STATE ---
-        const PIN_CORRECT = "3141";
-        
-        // WhatsApp Configuration (Country Code 55 + DDD + Phone)
-        const DEFAULT_OWNER_PHONE = "5562999998888"; 
+    <!-- Firebase Cloud Modules -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        let isOwnerMode = false;
-        let selectedStickerNum = null;
-        let ownerPhone = localStorage.getItem('firma_album_owner_phone') || DEFAULT_OWNER_PHONE;
-        let ownerBanner = localStorage.getItem('firma_album_banner_url') || '';
+        // APP CONSTANTS & DEFAULTS (Altere aqui para mudar o padrão no GitHub)
+        window.PIN_CORRECT = "3141";
+        window.DEFAULT_OWNER_PHONE = "5562998396026"; // Altere para seu numero padrao
+        window.DEFAULT_BANNER_URL = "figuras.png";        // Altere para sua imagem de titulo no GitHub
 
-        // Trade Cart Lists
-        let tradeWants = [];  // Numbers visitor wants from owner duplicates
-        let tradeOffers = []; // Numbers visitor offers to owner needed list
+        window.isOwnerMode = false;
+        window.selectedStickerNum = null;
+        window.ownerPhone = localStorage.getItem('firma_album_owner_phone') || window.DEFAULT_OWNER_PHONE;
+        window.ownerBanner = localStorage.getItem('firma_album_banner_url') || window.DEFAULT_BANNER_URL;
 
-        // Default Sample Sticker Data
+        window.tradeWants = [];  
+        window.tradeOffers = []; 
+
         function generateDefaultStickers() {
             const list = [];
-            
             const mockDuplicates = [
                 { num: "03", qty: 2 }, { num: "07", qty: 1 }, { num: "12", qty: 3 }, 
                 { num: "18", qty: 1 }, { num: "25", qty: 2 }, { num: "33", qty: 1 }, 
                 { num: "42", qty: 4 }, { num: "50", qty: 1 }, { num: "78", qty: 2 }
             ];
-
             const mockNeeded = ["02", "05", "09", "14", "21", "28", "36", "41", "49", "57", "63", "80", "97"];
 
-            mockDuplicates.forEach(item => {
-                list.push({ num: item.num, status: 'owned', duplicates: item.qty });
-            });
-
-            mockNeeded.forEach(num => {
-                list.push({ num: num, status: 'needed', duplicates: 0 });
-            });
+            mockDuplicates.forEach(item => list.push({ num: item.num, status: 'owned', duplicates: item.qty }));
+            mockNeeded.forEach(num => list.push({ num: num, status: 'needed', duplicates: 0 }));
 
             return list;
         }
 
-        let stickers = JSON.parse(localStorage.getItem('firma_album_numbers_2026')) || generateDefaultStickers();
+        window.stickers = JSON.parse(localStorage.getItem('firma_album_numbers_2026')) || generateDefaultStickers();
 
-        function saveData() {
-            localStorage.setItem('firma_album_numbers_2026', JSON.stringify(stickers));
-            updateDashboardStats();
+        // Cloud Storage Setup
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'firma-album-2026';
+        let db = null;
+        let auth = null;
+
+        async function initCloudSync() {
+            try {
+                if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                    const firebaseConfig = JSON.parse(__firebase_config);
+                    const app = initializeApp(firebaseConfig);
+                    auth = getAuth(app);
+                    db = getFirestore(app);
+
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+
+                    // Listen to real-time updates from cloud
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'album_settings', 'config');
+                    onSnapshot(docRef, (docSnap) => {
+                        if (docSnap.exists()) {
+                            const data = docSnap.data();
+                            if (data.ownerPhone) {
+                                window.ownerPhone = data.ownerPhone;
+                                localStorage.setItem('firma_album_owner_phone', data.ownerPhone);
+                            }
+                            if (data.ownerBanner !== undefined) {
+                                window.ownerBanner = data.ownerBanner;
+                                localStorage.setItem('firma_album_banner_url', data.ownerBanner);
+                            }
+                            if (data.stickers && Array.isArray(data.stickers)) {
+                                window.stickers = data.stickers;
+                                localStorage.setItem('firma_album_numbers_2026', JSON.stringify(data.stickers));
+                            }
+                            window.updateBannerUI();
+                            window.renderStickers();
+                        }
+                    }, (err) => console.warn("Cloud sync error:", err));
+                }
+            } catch (err) {
+                console.warn("Running in local mode:", err);
+            }
+        }
+
+        window.saveData = async function() {
+            localStorage.setItem('firma_album_numbers_2026', JSON.stringify(window.stickers));
+            localStorage.setItem('firma_album_owner_phone', window.ownerPhone);
+            localStorage.setItem('firma_album_banner_url', window.ownerBanner);
+
+            window.updateDashboardStats();
+
+            // Push to cloud if available
+            if (db && auth && auth.currentUser) {
+                try {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'album_settings', 'config');
+                    await setDoc(docRef, {
+                        ownerPhone: window.ownerPhone,
+                        ownerBanner: window.ownerBanner,
+                        stickers: window.stickers,
+                        updatedAt: new Date().toISOString()
+                    }, { merge: true });
+                } catch(e) {
+                    console.error("Cloud save failed:", e);
+                }
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initCloudSync();
+            window.updateBannerUI();
+            window.renderStickers();
+        });
+    </script>
+
+    <!-- Main Dynamic Application Script -->
+    <script>
+        function updateBannerUI() {
+            const bannerImg = document.getElementById('header-banner-img');
+            if (bannerImg) {
+                if (window.ownerBanner && window.ownerBanner.trim() !== '') {
+                    bannerImg.src = window.ownerBanner;
+                } else {
+                    bannerImg.src = 'https://placehold.co/1200x250/381318/ededed?text=TITULO+DO+ALBUM+2026';
+                }
+            }
         }
 
         function playSound(type) {
@@ -538,12 +617,15 @@
         function renderStickers() {
             const containerNeeded = document.getElementById('container-needed');
             const containerTrade = document.getElementById('container-trade');
-            const searchVal = document.getElementById('search-input').value.toLowerCase().trim();
+            const searchInput = document.getElementById('search-input');
+            const searchVal = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+            if (!containerNeeded || !containerTrade) return;
 
             containerNeeded.innerHTML = '';
             containerTrade.innerHTML = '';
 
-            const searchFiltered = stickers.filter(s => s.num.toLowerCase().includes(searchVal));
+            const searchFiltered = (window.stickers || []).filter(s => s.num.toLowerCase().includes(searchVal));
 
             const neededList = searchFiltered.filter(s => s.status === 'needed');
             const tradeList = searchFiltered.filter(s => s.duplicates > 0);
@@ -556,7 +638,7 @@
 
             // Render NEEDED Stickers (Rose Cards)
             neededList.forEach(s => {
-                const inOffers = tradeOffers.includes(s.num);
+                const inOffers = window.tradeOffers.includes(s.num);
                 const selectedRing = inOffers ? "ring-2 ring-amber-400 bg-amber-950/70 scale-105" : "";
 
                 const cardHtml = `
@@ -576,7 +658,7 @@
 
             // Render TRADE Stickers (Emerald Cards)
             tradeList.forEach(s => {
-                const inWants = tradeWants.includes(s.num);
+                const inWants = window.tradeWants.includes(s.num);
                 const selectedRing = inWants ? "ring-2 ring-emerald-400 bg-emerald-950/70 scale-105" : "";
 
                 const cardHtml = `
@@ -602,8 +684,8 @@
         }
 
         function updateDashboardStats() {
-            const neededCount = stickers.filter(s => s.status === 'needed').length;
-            const tradeCount = stickers.reduce((acc, s) => acc + (s.duplicates || 0), 0);
+            const neededCount = (window.stickers || []).filter(s => s.status === 'needed').length;
+            const tradeCount = (window.stickers || []).reduce((acc, s) => acc + (s.duplicates || 0), 0);
 
             document.getElementById('stat-trade').innerText = tradeCount;
             document.getElementById('stat-needed').innerText = neededCount;
@@ -611,12 +693,12 @@
             const badge = document.getElementById('trade-counter-badge');
             const floatingBar = document.getElementById('floating-trade-bar');
             const floatingCartCount = document.getElementById('floating-cart-count');
-            const totalTradeCart = tradeWants.length + tradeOffers.length;
+            const totalTradeCart = window.tradeWants.length + window.tradeOffers.length;
 
             if (totalTradeCart > 0) {
                 badge.innerText = totalTradeCart;
                 badge.classList.remove('hidden');
-                if (!isOwnerMode) {
+                if (!window.isOwnerMode) {
                     floatingCartCount.innerText = totalTradeCart;
                     floatingBar.classList.remove('hidden');
                 } else {
@@ -629,16 +711,16 @@
         }
 
         function requestOwnerAccess() {
-            if (isOwnerMode) {
-                isOwnerMode = false;
+            if (window.isOwnerMode) {
+                window.isOwnerMode = false;
                 updateOwnerUI();
                 showToast("Modo Visitante ativado", "info");
                 return;
             }
 
-            const pin = prompt("Digite seu PIN:");
-            if (pin === PIN_CORRECT) {
-                isOwnerMode = true;
+            const pin = prompt("Digite seu PIN de acesso:");
+            if (pin === window.PIN_CORRECT) {
+                window.isOwnerMode = true;
                 updateOwnerUI();
                 showToast("Modo Dono ativado com sucesso! 🔑", "success");
                 if (typeof confetti === 'function') confetti({ particleCount: 50, spread: 60 });
@@ -652,7 +734,7 @@
             const badgeVisitor = document.getElementById('badge-visitor');
             const btnSwitch = document.getElementById('btn-switch-owner');
 
-            if (isOwnerMode) {
+            if (window.isOwnerMode) {
                 ownerActions.classList.remove('hidden');
                 ownerActions.classList.add('flex');
                 badgeVisitor.className = "text-xs px-2.5 py-1 rounded-lg font-bold bg-amber-400 text-wine-950 shadow";
@@ -670,9 +752,9 @@
 
         function handleCardClick(num, type) {
             playSound('click');
-            selectedStickerNum = num;
+            window.selectedStickerNum = num;
 
-            if (!isOwnerMode) {
+            if (!window.isOwnerMode) {
                 if (type === 'needed') {
                     toggleTradeOffer(num);
                 } else {
@@ -681,7 +763,7 @@
                 return;
             }
 
-            const sticker = stickers.find(s => s.num === num);
+            const sticker = window.stickers.find(s => s.num === num);
             if (!sticker) return;
 
             document.getElementById('modal-card-num').innerText = `#${sticker.num}`;
@@ -713,44 +795,44 @@
         }
 
         function toggleTradeWant(num) {
-            const idx = tradeWants.indexOf(num);
+            const idx = window.tradeWants.indexOf(num);
             if (idx > -1) {
-                tradeWants.splice(idx, 1);
+                window.tradeWants.splice(idx, 1);
             } else {
-                tradeWants.push(num);
+                window.tradeWants.push(num);
             }
             renderStickers();
             updateTradeDrawer();
         }
 
         function toggleTradeOffer(num) {
-            const idx = tradeOffers.indexOf(num);
+            const idx = window.tradeOffers.indexOf(num);
             if (idx > -1) {
-                tradeOffers.splice(idx, 1);
+                window.tradeOffers.splice(idx, 1);
             } else {
-                tradeOffers.push(num);
+                window.tradeOffers.push(num);
             }
             renderStickers();
             updateTradeDrawer();
         }
 
         function adjustRepetidas(delta) {
-            if (!selectedStickerNum) return;
-            const sticker = stickers.find(s => s.num === selectedStickerNum);
+            if (!window.selectedStickerNum) return;
+            const sticker = window.stickers.find(s => s.num === window.selectedStickerNum);
             if (!sticker) return;
 
             sticker.duplicates = Math.max(0, (sticker.duplicates || 0) + delta);
             if (sticker.duplicates > 0) {
                 sticker.status = 'owned';
             }
-            saveData();
+            if (typeof window.saveData === 'function') window.saveData();
             document.getElementById('modal-dup-count').innerText = sticker.duplicates;
             renderStickers();
         }
 
         function toggleStickerStatus() {
-            if (!selectedStickerNum) return;
-            const sticker = stickers.find(s => s.num === selectedStickerNum);
+            if (!window.selectedStickerNum) return;
+            const sticker = window.stickers.find(s => s.num === window.selectedStickerNum);
             if (!sticker) return;
 
             if (sticker.status === 'owned') {
@@ -759,21 +841,19 @@
             } else {
                 sticker.status = 'owned';
             }
-            saveData();
+            if (typeof window.saveData === 'function') window.saveData();
             closeModal('modal-sticker-detail');
             renderStickers();
             showToast(`Figurinha #${sticker.num} atualizada!`, "success");
         }
 
         function deleteSticker() {
-            if (!selectedStickerNum) return;
-            if (confirm(`Tem certeza que deseja excluir a figurinha #${selectedStickerNum}?`)) {
-                stickers = stickers.filter(s => s.num !== selectedStickerNum);
-                saveData();
-                closeModal('modal-sticker-detail');
-                renderStickers();
-                showToast("Figurinha removida!", "info");
-            }
+            if (!window.selectedStickerNum) return;
+            window.stickers = window.stickers.filter(s => s.num !== window.selectedStickerNum);
+            if (typeof window.saveData === 'function') window.saveData();
+            closeModal('modal-sticker-detail');
+            renderStickers();
+            showToast("Figurinha removida!", "info");
         }
 
         function openAddStickerModal() {
@@ -791,16 +871,16 @@
 
             if (!num) return;
 
-            const existing = stickers.find(s => s.num === num);
+            const existing = window.stickers.find(s => s.num === num);
             if (existing) {
                 existing.status = status;
                 existing.duplicates = duplicates;
             } else {
-                stickers.push({ num, status, duplicates });
+                window.stickers.push({ num, status, duplicates });
             }
 
-            stickers.sort((a, b) => a.num.localeCompare(b.num, undefined, { numeric: true }));
-            saveData();
+            window.stickers.sort((a, b) => a.num.localeCompare(b.num, undefined, { numeric: true }));
+            if (typeof window.saveData === 'function') window.saveData();
             closeModal('modal-add-sticker');
             renderStickers();
             showToast(`Figurinha #${num} salva com sucesso!`, "success");
@@ -824,73 +904,66 @@
             items.forEach(item => {
                 const num = item.replace(/[^a-zA-Z0-9]/g, '').padStart(2, '0');
                 if (num) {
-                    const exists = stickers.find(s => s.num === num);
+                    const exists = window.stickers.find(s => s.num === num);
                     if (!exists) {
-                        stickers.push({ num: num, status: 'needed', duplicates: 0 });
+                        window.stickers.push({ num: num, status: 'needed', duplicates: 0 });
                         addedCount++;
                     }
                 }
             });
 
-            stickers.sort((a, b) => a.num.localeCompare(b.num, undefined, { numeric: true }));
-            saveData();
+            window.stickers.sort((a, b) => a.num.localeCompare(b.num, undefined, { numeric: true }));
+            if (typeof window.saveData === 'function') window.saveData();
             closeModal('modal-batch-import');
             renderStickers();
             showToast(`${addedCount} novas figurinhas importadas!`, "success");
         }
 
         function resetToDefaultAlbum() {
-            if (confirm("Deseja restaurar as figurinhas padrão (1 a 100)?")) {
-                stickers = [];
-                for (let i = 1; i <= 100; i++) {
-                    const num = i.toString().padStart(2, '0');
-                    stickers.push({ num: num, status: 'needed', duplicates: 0 });
-                }
-                saveData();
-                closeModal('modal-batch-import');
-                renderStickers();
-                showToast("Álbum restaurado (1 a 100)!", "info");
+            window.stickers = [];
+            for (let i = 1; i <= 100; i++) {
+                const num = i.toString().padStart(2, '0');
+                window.stickers.push({ num: num, status: 'needed', duplicates: 0 });
             }
+            if (typeof window.saveData === 'function') window.saveData();
+            closeModal('modal-batch-import');
+            renderStickers();
+            showToast("Álbum restaurado (1 a 100)!", "info");
         }
 
         function openOwnerSettingsModal() {
-            document.getElementById('owner-phone-input').value = ownerPhone;
-            document.getElementById('owner-banner-input').value = ownerBanner;
+            document.getElementById('owner-phone-input').value = window.ownerPhone;
+            document.getElementById('owner-banner-input').value = window.ownerBanner;
             openModal('modal-owner-settings');
         }
 
-        function saveOwnerSettings() {
+        async function saveOwnerSettings() {
             const rawPhone = document.getElementById('owner-phone-input').value.replace(/\D/g, '');
             const bannerUrl = document.getElementById('owner-banner-input').value.trim();
 
-            ownerPhone = rawPhone;
-            ownerBanner = bannerUrl;
+            window.ownerPhone = rawPhone || window.DEFAULT_OWNER_PHONE;
+            window.ownerBanner = bannerUrl;
 
-            localStorage.setItem('firma_album_owner_phone', ownerPhone);
-            localStorage.setItem('firma_album_banner_url', ownerBanner);
-
-            const bannerImg = document.getElementById('header-banner-img');
-            if (ownerBanner) {
-                bannerImg.src = ownerBanner;
-            } else {
-                bannerImg.src = 'https://placehold.co/1200x250/381318/ededed?text=SUA+IMAGEM+DE+TITULO+AQUI+(1200x250)';
+            updateBannerUI();
+            if (typeof window.saveData === 'function') {
+                await window.saveData();
             }
 
             closeModal('modal-owner-settings');
-            showToast("Configurações salvas!", "success");
+            showToast("Configurações salvas permanentemente!", "success");
         }
 
         function updateTradeDrawer() {
             const wantsList = document.getElementById('trade-wants-list');
             const offersList = document.getElementById('trade-offers-list');
 
-            document.getElementById('badge-wants-qty').innerText = `${tradeWants.length} quer`;
-            document.getElementById('badge-offers-qty').innerText = `${tradeOffers.length} tem`;
+            document.getElementById('badge-wants-qty').innerText = `${window.tradeWants.length} quer`;
+            document.getElementById('badge-offers-qty').innerText = `${window.tradeOffers.length} tem`;
 
-            if (tradeWants.length === 0) {
+            if (window.tradeWants.length === 0) {
                 wantsList.innerHTML = `<p class="text-xs text-[#ededed]/50 italic text-center py-2">Nenhuma selecionada. Toque nos cards verdes da coluna "Tenho para Troca".</p>`;
             } else {
-                wantsList.innerHTML = tradeWants.map(num => `
+                wantsList.innerHTML = window.tradeWants.map(num => `
                     <div class="flex items-center justify-between bg-[#381318] px-2.5 py-1 rounded-lg text-xs border border-[#5a2228]">
                         <span class="font-bold text-emerald-400">Figurinha #${num}</span>
                         <button onclick="toggleTradeWant('${num}')" class="text-rose-400 hover:text-rose-300 ml-2"><i class="fa-solid fa-xmark"></i></button>
@@ -898,10 +971,10 @@
                 `).join('');
             }
 
-            if (tradeOffers.length === 0) {
+            if (window.tradeOffers.length === 0) {
                 offersList.innerHTML = `<p class="text-xs text-[#ededed]/50 italic text-center py-2">Nenhuma oferecida. Toque nos cards vermelhos da coluna "Preciso".</p>`;
             } else {
-                offersList.innerHTML = tradeOffers.map(num => `
+                offersList.innerHTML = window.tradeOffers.map(num => `
                     <div class="flex items-center justify-between bg-[#381318] px-2.5 py-1 rounded-lg text-xs border border-[#5a2228]">
                         <span class="font-bold text-amber-300">Figurinha #${num}</span>
                         <button onclick="toggleTradeOffer('${num}')" class="text-rose-400 hover:text-rose-300 ml-2"><i class="fa-solid fa-xmark"></i></button>
@@ -916,7 +989,7 @@
         }
 
         function generateTradeMessage() {
-            if (tradeWants.length === 0 && tradeOffers.length === 0) return null;
+            if (window.tradeWants.length === 0 && window.tradeOffers.length === 0) return null;
 
             const name = document.getElementById('visitor-name').value.trim();
             const dept = document.getElementById('visitor-dept').value.trim();
@@ -929,11 +1002,11 @@
             msg += `👤 *Nome:* ${name}\n`;
             msg += `🏢 *Departamento:* ${dept}\n\n`;
 
-            if (tradeWants.length > 0) {
-                msg += `🟢 *Das suas REPETIDAS, eu quero:* ${tradeWants.map(n => `#${n}`).join(', ')}\n`;
+            if (window.tradeWants.length > 0) {
+                msg += `🟢 *Das suas REPETIDAS, eu quero:* ${window.tradeWants.map(n => `#${n}`).join(', ')}\n`;
             }
-            if (tradeOffers.length > 0) {
-                msg += `🔴 *Das que você PRECISA, eu tenho pra te dar:* ${tradeOffers.map(n => `#${n}`).join(', ')}\n`;
+            if (window.tradeOffers.length > 0) {
+                msg += `🔴 *Das que você PRECISA, eu tenho pra te dar:* ${window.tradeOffers.map(n => `#${n}`).join(', ')}\n`;
             }
             msg += `\nBora fechar essa troca? 😉`;
 
@@ -952,7 +1025,7 @@
             }
 
             const encoded = encodeURIComponent(res.text);
-            const targetUrl = ownerPhone ? `https://wa.me/${ownerPhone}?text=${encoded}` : `https://api.whatsapp.com/send?text=${encoded}`;
+            const targetUrl = window.ownerPhone ? `https://wa.me/${window.ownerPhone}?text=${encoded}` : `https://api.whatsapp.com/send?text=${encoded}`;
             window.open(targetUrl, '_blank');
         }
 
@@ -1005,15 +1078,6 @@
                 toast.classList.add('translate-y-16', 'opacity-0');
             }, 3000);
         }
-
-        // Initialize on page load
-        window.onload = function() {
-            if (ownerBanner) {
-                const bannerImg = document.getElementById('header-banner-img');
-                if (bannerImg) bannerImg.src = ownerBanner;
-            }
-            renderStickers();
-        };
     </script>
 </body>
 </html>
