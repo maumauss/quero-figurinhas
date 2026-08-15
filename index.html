@@ -13,7 +13,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
     <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- QRCode JS Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
+    <!-- Tailwind Theme Extension -->
     <script>
         tailwind.config = {
             theme: {
@@ -39,6 +42,7 @@
         }
     </script>
 
+    <!-- Custom CSS Styles -->
     <style>
         body {
             background-color: #481a1f;
@@ -73,7 +77,11 @@
 
 <body class="min-h-screen font-sans flex flex-col antialiased selection:bg-amber-500 selection:text-slate-950">
 
-    <!-- Banner Header Area -->
+    <!-- ================================================================= -->
+    <!-- BLOCK 1: BANNER & TOP NAVIGATION HEADER                           -->
+    <!-- ================================================================= -->
+
+    <!-- Top Banner Image Area -->
     <div id="banner-container" class="w-full bg-[#2b0e12] border-b border-[#5a2228] px-3 py-3 flex justify-center items-center">
         <div class="max-w-7xl w-full flex justify-center">
             <img id="header-banner-img" 
@@ -84,7 +92,7 @@
         </div>
     </div>
 
-    <!-- Top Bar Navigation -->
+    <!-- Sticky Navigation Header -->
     <header class="sticky top-0 z-40 bg-[#381318]/95 backdrop-blur-md border-b border-[#5a2228] px-4 py-3 shadow-2xl">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
             
@@ -102,7 +110,12 @@
             </div>
 
             <!-- Top Actions & Owner Mode Switch -->
-            <div class="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+            <div class="flex items-center gap-2.5 w-full sm:w-auto justify-end flex-wrap">
+                <button onclick="openQrModal()" class="bg-[#2b0e12] hover:bg-[#5a2228] border border-[#5a2228] text-amber-300 text-xs font-bold py-2 px-3 rounded-xl flex items-center gap-1.5 transition-all shadow-md">
+                    <i class="fa-solid fa-qrcode text-amber-400"></i>
+                    <span class="hidden sm:inline">QR Code</span>
+                </button>
+
                 <button onclick="toggleTradeModal()" class="relative bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2 px-3.5 rounded-xl border border-emerald-400 flex items-center gap-2 transition-all shadow-md">
                     <i class="fa-solid fa-paper-plane text-amber-300"></i>
                     <span>SOLICITAR TROCA</span>
@@ -113,7 +126,7 @@
                     <span id="badge-visitor" class="text-xs px-2.5 py-1 rounded-lg font-bold bg-[#381318] text-[#ededed]/80 border border-[#5a2228]">
                         <i class="fa-solid fa-eye mr-1"></i> Visitante
                     </span>
-                    <button onclick="requestOwnerAccess()" id="btn-switch-owner" class="text-xs px-2.5 py-1 rounded-lg text-[#ededed]/70 hover:text-[#ededed] font-semibold transition-all hover:bg-[#381318]">
+                    <button onclick="openPinModal()" id="btn-switch-owner" class="text-xs px-2.5 py-1 rounded-lg text-[#ededed]/70 hover:text-[#ededed] font-semibold transition-all hover:bg-[#381318]">
                         <i class="fa-solid fa-lock text-amber-400/80 mr-1"></i> Sou o Dono
                     </button>
                 </div>
@@ -121,10 +134,15 @@
         </div>
     </header>
 
+
+    <!-- ================================================================= -->
+    <!-- BLOCK 2: MAIN DASHBOARD & DUAL COLUMN STICKER LISTS               -->
+    <!-- ================================================================= -->
+
     <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 space-y-4">
 
         <!-- Progress Overview Banner -->
-        <section class="bg-gradient-to-br from-[#381318] via-[#381318] to-[#2b0e12] rounded-2xl p-4 border border-[#5a2228] shadow-xl relative overflow-hidden">
+        <section class="bg-gradient-to-br from-[#381318] via-[#381318] to-[#2b0e12] rounded-2xl p-4 border border-[#5a2228] shadow-xl relative overflow-hidden space-y-3">
             <div class="flex flex-col md:flex-row items-center justify-between gap-4">
                 
                 <div class="space-y-1 text-center md:text-left">
@@ -136,7 +154,7 @@
                         Álbum do Maurício 🚀
                     </h2>
                     <p class="text-xs text-[#ededed]/80 max-w-xl leading-relaxed">
-                        Veja o que <strong class="text-rose-400">falta para o Maurício</strong> e o que ele <strong class="text-emerald-400">tem repetido para troca</strong>. Toque nas figurinhas para montar sua proposta no WhatsApp!
+                        Selecione abaixo as figurinhas que você <strong class="text-rose-400">tem para trocar</strong> e as que você <strong class="text-emerald-400">quer receber</strong>. Monte sua proposta e mande direto no Teams ou WhatsApp!
                     </p>
                 </div>
 
@@ -152,6 +170,20 @@
                         <div id="stat-trade" class="text-2xl font-black text-emerald-400 font-display leading-tight">0</div>
                         <span class="text-[9px] text-[#ededed]/60">repetidas</span>
                     </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar Bar Component -->
+            <div class="pt-2 border-t border-[#5a2228]/80">
+                <div class="flex items-center justify-between text-xs mb-1.5">
+                    <span class="font-bold text-[#ededed]/80 flex items-center gap-1.5">
+                        <i class="fa-solid fa-chart-line text-amber-400"></i> Progresso do Colecionador:
+                        <span id="badge-achievement" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30">🥉 Começando!</span>
+                    </span>
+                    <span class="font-black text-amber-300 font-display" id="progress-percent-text">0%</span>
+                </div>
+                <div class="w-full bg-[#2b0e12] h-3.5 rounded-full p-0.5 border border-[#5a2228] overflow-hidden">
+                    <div id="progress-bar-fill" class="bg-gradient-to-r from-amber-500 via-emerald-400 to-emerald-500 h-full rounded-full transition-all duration-500 w-0"></div>
                 </div>
             </div>
         </section>
@@ -189,23 +221,31 @@
             </button>
         </div>
 
+        <!-- Dual Column Side-by-Side Area -->
         <section class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
             
-            <!-- Column 1: PRECISO -->
+            <!-- Column 1: PRECISO / ELE PRECISA (Você Tem pra Dar) -->
             <div class="bg-[#381318]/70 border border-rose-500/30 rounded-2xl p-4 space-y-3 shadow-lg">
-                <div class="flex items-center justify-between border-b border-[#5a2228] pb-2.5">
-                    <div class="flex items-center gap-2">
-                        <span class="w-3 h-3 rounded-full bg-rose-500 animate-pulse"></span>
-                        <h3 class="text-sm font-black font-display text-rose-300 uppercase tracking-wider">
-                            PRECISO (O Maurício não tem)
-                        </h3>
+                <div class="border-b border-[#5a2228] pb-2.5">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-rose-500 animate-pulse"></span>
+                            <h3 class="text-sm font-black font-display text-rose-300 uppercase tracking-wider">
+                                🔴 FIGURINHAS QUE O MAURÍCIO PRECISA
+                            </h3>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span id="badge-count-needed" class="text-xs font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">0</span>
+                            <button onclick="openAddStickerModalFor('needed')" class="owner-btn-tab hidden bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 border border-rose-500/40 text-[11px] px-2.5 py-1 rounded-lg font-bold transition-all flex items-center gap-1">
+                                <i class="fa-solid fa-plus text-xs"></i> Add
+                            </button>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <span id="badge-count-needed" class="text-xs font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">0</span>
-                        <button onclick="openAddStickerModalFor('needed')" class="owner-btn-tab hidden bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 border border-rose-500/40 text-[11px] px-2.5 py-1 rounded-lg font-bold transition-all flex items-center gap-1">
-                            <i class="fa-solid fa-plus text-xs"></i> Add
-                        </button>
-                    </div>
+                    <!-- Easy explanatory guide subheader -->
+                    <p class="text-[11px] text-rose-200/70 mt-1 flex items-center gap-1 font-medium">
+                        <i class="fa-solid fa-hand-holding-hand text-amber-300 text-xs"></i>
+                        <span><strong>Selecione as que VOCÊ tem:</strong></span>
+                    </p>
                 </div>
 
                 <div id="container-needed" class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-5 lg:grid-cols-6 gap-2 min-h-[120px]">
@@ -217,21 +257,28 @@
                 </p>
             </div>
 
-            <!-- Column 2: TENHO PARA TROCA -->
+            <!-- Column 2: TENHO PARA TROCA / ELE TEM P/ TROCA (Você Quer Receber) -->
             <div class="bg-[#381318]/70 border border-emerald-500/30 rounded-2xl p-4 space-y-3 shadow-lg">
-                <div class="flex items-center justify-between border-b border-[#5a2228] pb-2.5">
-                    <div class="flex items-center gap-2">
-                        <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
-                        <h3 class="text-sm font-black font-display text-emerald-300 uppercase tracking-wider">
-                            TENHO PARA TROCA (Repetidas do Maurício)
-                        </h3>
+                <div class="border-b border-[#5a2228] pb-2.5">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+                            <h3 class="text-sm font-black font-display text-emerald-300 uppercase tracking-wider">
+                                🟢 FIGURINHAS REPETIDAS DO MAURÍCIO
+                            </h3>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span id="badge-count-trade" class="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">0</span>
+                            <button onclick="openAddStickerModalFor('trade')" class="owner-btn-tab hidden bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-300 border border-emerald-500/40 text-[11px] px-2.5 py-1 rounded-lg font-bold transition-all flex items-center gap-1">
+                                <i class="fa-solid fa-plus text-xs"></i> Add
+                            </button>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <span id="badge-count-trade" class="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">0</span>
-                        <button onclick="openAddStickerModalFor('trade')" class="owner-btn-tab hidden bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-300 border border-emerald-500/40 text-[11px] px-2.5 py-1 rounded-lg font-bold transition-all flex items-center gap-1">
-                            <i class="fa-solid fa-plus text-xs"></i> Add
-                        </button>
-                    </div>
+                    <!-- Easy explanatory guide subheader -->
+                    <p class="text-[11px] text-emerald-200/70 mt-1 flex items-center gap-1 font-medium">
+                        <i class="fa-solid fa-gift text-emerald-300 text-xs"></i>
+                        <span><strong>Selecione as que VOCÊ quer:</strong></span>
+                    </p>
                 </div>
 
                 <div id="container-trade" class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-5 lg:grid-cols-6 gap-2 min-h-[120px]">
@@ -245,7 +292,65 @@
 
         </section>
 
+        <!-- Section 3: Mural da Firma (Hall da Fama dos Trocadores) -->
+        <section class="bg-[#381318]/70 border border-amber-500/30 rounded-2xl p-4 space-y-3 shadow-lg">
+            <div class="flex items-center justify-between border-b border-[#5a2228] pb-2.5">
+                <div class="flex items-center gap-2">
+                    <span class="text-lg">🏆</span>
+                    <div>
+                        <h3 class="text-sm font-black font-display text-amber-300 uppercase tracking-wider">
+                            MURAL DA FIRMA - HALL DA FAMA
+                        </h3>
+                        <p class="text-[11px] text-[#ededed]/70">Colegas do IPOG que mais ajudaram o Maurício a completar o álbum!</p>
+                    </div>
+                </div>
+                <button onclick="openAddPartnerModal()" class="owner-btn-tab hidden bg-amber-400 hover:bg-amber-300 text-wine-950 text-xs px-3 py-1.5 rounded-xl font-bold transition-all items-center gap-1.5 shadow">
+                    <i class="fa-solid fa-plus text-xs"></i> Add Troca
+                </button>
+            </div>
+
+            <div id="container-partners" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                <!-- Partner cards injected dynamically -->
+            </div>
+
+            <p id="empty-partners" class="hidden text-xs text-[#ededed]/50 text-center py-4 italic">
+                Nenhuma troca registrada no mural ainda.
+            </p>
+        </section>
+
     </main>
+
+
+    <!-- ================================================================= -->
+    <!-- BLOCK 3: MODALS & OVERLAYS                                        -->
+    <!-- ================================================================= -->
+
+    <!-- Modal 0: Secret Password Access PIN Modal -->
+    <div id="modal-pin-access" class="fixed inset-0 bg-[#2b0e12]/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#381318] border border-[#5a2228] rounded-2xl max-w-xs w-full p-5 space-y-4 shadow-2xl relative">
+            <button onclick="closeModal('modal-pin-access')" class="absolute top-3 right-3 text-[#ededed]/60 hover:text-[#ededed]">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="text-center space-y-1">
+                <div class="w-12 h-12 bg-amber-400/20 border border-amber-400/30 text-amber-300 rounded-2xl flex items-center justify-center text-xl mx-auto shadow mb-2">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h3 class="text-base font-bold font-display text-[#ededed]">Acesso do Dono</h3>
+                <p class="text-xs text-[#ededed]/70">Digite o PIN de acesso para editar o álbum:</p>
+            </div>
+
+            <form onsubmit="handlePinSubmit(event)" class="space-y-3">
+                <div class="relative">
+                    <input type="password" id="pin-input" placeholder="••••" required maxlength="10"
+                        class="w-full py-2.5 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-center text-lg font-bold tracking-widest text-amber-300 focus:outline-none focus:border-amber-400 placeholder-[#ededed]/20">
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-amber-400 hover:bg-amber-300 text-wine-950 font-bold text-xs rounded-xl shadow-md transition-all">
+                    Entrar no Modo Dono
+                </button>
+            </form>
+        </div>
+    </div>
 
     <!-- Modal 1: Trade Request Modal -->
     <div id="modal-trade" class="fixed inset-0 bg-[#2b0e12]/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
@@ -261,7 +366,7 @@
                 </div>
                 <div>
                     <h3 class="text-base font-bold font-display text-[#ededed]">Solicitar Troca com o Maurício</h3>
-                    <p class="text-xs text-[#ededed]/70">Preencha seus dados para enviar a proposta direto no WhatsApp dele!</p>
+                    <p class="text-xs text-[#ededed]/70">Preencha seus dados e escolha o canal para enviar a proposta!</p>
                 </div>
             </div>
 
@@ -308,13 +413,16 @@
 
             </div>
 
-            <!-- Submit Buttons -->
-            <div class="pt-2 border-t border-[#5a2228] grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <button onclick="sendWhatsAppTrade()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
-                    <i class="fa-brands fa-whatsapp text-sm"></i> Enviar via WhatsApp
+            <!-- Submit Buttons (WhatsApp, Teams, Copy) -->
+            <div class="pt-2 border-t border-[#5a2228] grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <button onclick="sendWhatsAppTrade()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
                 </button>
-                <button onclick="copyTradeText()" class="w-full py-2.5 bg-[#5a2228] hover:bg-[#6f2c34] text-[#ededed] font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-copy"></i> Copiar Proposta
+                <button onclick="sendTeamsTrade()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-users text-sm"></i> Teams
+                </button>
+                <button onclick="copyTradeText()" class="w-full py-2.5 bg-[#5a2228] hover:bg-[#6f2c34] text-[#ededed] font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-copy"></i> Copiar
                 </button>
             </div>
 
@@ -333,22 +441,39 @@
             </h3>
 
             <p class="text-xs text-[#ededed]/70">
-                Configure seu WhatsApp e imagem de título. Alterações são salvas em tempo real para todos os visitantes!
+                Configure seu WhatsApp, E-mail do Teams, total de figurinhas e link da página.
             </p>
 
             <div class="space-y-3">
                 <div>
+                    <label class="text-[10px] font-semibold text-[#ededed]/70 block mb-1">Total de Figurinhas do Álbum</label>
+                    <input type="number" id="owner-total-stickers-input" placeholder="Ex: 112" min="1"
+                        class="w-full py-2 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] focus:outline-none focus:border-amber-400">
+                    <span class="text-[9px] text-[#ededed]/50 block mt-1">Usado para calcular a % de progresso da coleção.</span>
+                </div>
+
+                <div>
                     <label class="text-[10px] font-semibold text-[#ededed]/70 block mb-1">Seu WhatsApp (DDD + Número)</label>
                     <input type="text" id="owner-phone-input" placeholder="Ex: 5562998396026" 
                         class="w-full py-2 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] focus:outline-none focus:border-amber-400">
-                    <span class="text-[9px] text-[#ededed]/50 block mt-1">Insira 55 + DDD + Seu Número (somente dígitos).</span>
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-semibold text-[#ededed]/70 block mb-1">Seu E-mail do Teams</label>
+                    <input type="email" id="owner-email-input" placeholder="Ex: mauricio.bitencourt@ipog.edu.br" 
+                        class="w-full py-2 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] focus:outline-none focus:border-amber-400">
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-semibold text-[#ededed]/70 block mb-1">Link Público da Página (para o QR Code)</label>
+                    <input type="text" id="owner-page-url-input" placeholder="Ex: https://seu-usuario.github.io/album-ipog" 
+                        class="w-full py-2 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] focus:outline-none focus:border-amber-400">
                 </div>
 
                 <div>
                     <label class="text-[10px] font-semibold text-[#ededed]/70 block mb-1">Imagem/Banner de Título (URL ou Arquivo)</label>
                     <input type="text" id="owner-banner-input" placeholder="Ex: figuras.png ou https://..." 
                         class="w-full py-2 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] focus:outline-none focus:border-amber-400">
-                    <span class="text-[9px] text-[#ededed]/50 block mt-1">No GitHub, salve o arquivo como `figuras.png` na mesma pasta.</span>
                 </div>
                 
                 <button onclick="saveOwnerSettings()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all mt-2">
@@ -376,6 +501,12 @@
             <div id="modal-owner-controls" class="border-t border-[#5a2228] pt-3 space-y-3">
                 <label class="text-[11px] font-bold text-amber-300 uppercase tracking-wider block text-center">Editar Status (Dono)</label>
                 
+                <div id="wrapper-negotiation-control" class="hidden">
+                    <button onclick="clearNegotiation()" class="w-full py-2 bg-amber-500/20 text-amber-300 hover:bg-amber-500/40 border border-amber-400/40 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 mb-2">
+                        <i class="fa-solid fa-ban text-amber-400"></i> Cancelar Negociação
+                    </button>
+                </div>
+
                 <div class="grid grid-cols-2 gap-2">
                     <div class="bg-[#2b0e12] p-2 rounded-xl border border-[#5a2228] text-center">
                         <span class="text-[10px] text-[#ededed]/60 block mb-1">Qtd Repetidas</span>
@@ -401,7 +532,7 @@
         </div>
     </div>
 
-    <!-- Modal 4: Add New Single Sticker Number (Targeted) -->
+    <!-- Modal 4: Add New Single Sticker Number -->
     <div id="modal-add-sticker" class="fixed inset-0 bg-[#2b0e12]/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-[#381318] border border-[#5a2228] rounded-2xl max-w-xs w-full p-5 space-y-3 shadow-2xl relative">
             <button onclick="closeModal('modal-add-sticker')" class="absolute top-3 right-3 text-[#ededed]/60 hover:text-[#ededed]">
@@ -434,7 +565,7 @@
         </div>
     </div>
 
-    <!-- Modal 5: Batch Import / Paste Google Sheets Data -->
+    <!-- Modal 5: Batch Import -->
     <div id="modal-batch-import" class="fixed inset-0 bg-[#2b0e12]/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-[#381318] border border-[#5a2228] rounded-2xl max-w-lg w-full p-5 space-y-3 shadow-2xl relative">
             <button onclick="closeModal('modal-batch-import')" class="absolute top-3 right-3 text-[#ededed]/60 hover:text-[#ededed]">
@@ -447,7 +578,7 @@
             </div>
 
             <p class="text-xs text-[#ededed]/70">
-                Cole a lista de números separados por vírgula, espaço ou linhas. Eles serão organizados e ordenados automaticamente.
+                Cole a lista de números separados por vírgula, espaço ou linhas.
             </p>
 
             <div class="space-y-2">
@@ -475,13 +606,78 @@
         </div>
     </div>
 
-    <!-- Toast Notification -->
+    <!-- Modal 6: QR Code Sharing Modal -->
+    <div id="modal-qr-code" class="fixed inset-0 bg-[#2b0e12]/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#381318] border border-[#5a2228] rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl relative text-center">
+            <button onclick="closeModal('modal-qr-code')" class="absolute top-3 right-3 text-[#ededed]/60 hover:text-[#ededed]">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="space-y-1">
+                <div class="w-10 h-10 bg-amber-400/20 text-amber-300 border border-amber-400/30 rounded-2xl flex items-center justify-center text-lg mx-auto shadow mb-1">
+                    <i class="fa-solid fa-qrcode"></i>
+                </div>
+                <h3 class="text-base font-bold font-display text-[#ededed]">Compartilhar Álbum</h3>
+                <p class="text-xs text-[#ededed]/70">Escaneie com a câmera do celular para acessar a central de trocas!</p>
+            </div>
+
+            <div class="flex justify-center p-3 bg-white rounded-2xl border-4 border-amber-400/40 shadow-inner max-w-[200px] mx-auto">
+                <div id="qrcode-container" class="flex justify-center items-center"></div>
+            </div>
+
+            <div class="bg-[#2b0e12] p-2 rounded-xl border border-[#5a2228]">
+                <p id="qr-link-display" class="text-[10px] text-amber-300/80 font-mono truncate max-w-full px-2 py-0.5">
+                    https://...
+                </p>
+            </div>
+
+            <button onclick="copyPageLink()" class="w-full py-2.5 bg-amber-400 hover:bg-amber-300 text-wine-950 font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-copy"></i> Copiar Link da Página
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal 7: Add/Edit Partner in Mural -->
+    <div id="modal-add-partner" class="fixed inset-0 bg-[#2b0e12]/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#381318] border border-[#5a2228] rounded-2xl max-w-xs w-full p-5 space-y-3 shadow-2xl relative">
+            <button onclick="closeModal('modal-add-partner')" class="absolute top-3 right-3 text-[#ededed]/60 hover:text-[#ededed]">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <h3 class="text-base font-bold font-display text-[#ededed]" id="modal-partner-title">Registrar Troca no Mural</h3>
+
+            <form onsubmit="handleSavePartner(event)" class="space-y-3">
+                <input type="hidden" id="partner-id">
+                <div>
+                    <label class="text-xs font-semibold text-[#ededed]/70">Nome do Colega *</label>
+                    <input type="text" id="partner-name" required placeholder="Ex: Ana Clara" class="w-full py-2 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] focus:outline-none focus:border-amber-400">
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-[#ededed]/70">Departamento *</label>
+                    <input type="text" id="partner-dept" required placeholder="Ex: RH / Marketing" class="w-full py-2 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] focus:outline-none focus:border-amber-400">
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-[#ededed]/70">Qtd. Figurinhas Trocadas *</label>
+                    <input type="number" id="partner-count" min="1" value="1" required class="w-full py-2 px-3 bg-[#2b0e12] border border-[#5a2228] rounded-xl text-xs text-[#ededed] focus:outline-none focus:border-amber-400">
+                </div>
+
+                <button type="submit" class="w-full py-2.5 bg-amber-400 hover:bg-amber-300 text-wine-950 font-bold text-xs rounded-xl shadow-md transition-all mt-1">
+                    Salvar no Mural
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification Overlay -->
     <div id="toast" class="fixed bottom-4 right-4 z-50 transform translate-y-16 opacity-0 transition-all duration-300 bg-[#381318] border border-[#8c3842] text-[#ededed] px-3.5 py-2.5 rounded-xl shadow-2xl flex items-center gap-2.5 text-xs font-semibold">
         <div id="toast-icon" class="text-amber-400">✨</div>
         <div id="toast-message">Mensagem</div>
     </div>
 
-    <!-- Firebase Cloud Modules -->
+
+    <!-- ==========================================
+         BLOCK 4: SCRIPT MODULE - CLOUD & DATA STORAGE
+         ========================================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -490,15 +686,28 @@
         // APP CONSTANTS & DEFAULTS
         window.PIN_CORRECT = "3141";
         window.DEFAULT_OWNER_PHONE = "5562998396026";
+        window.DEFAULT_OWNER_EMAIL = "mauricio.bitencourt@ipog.edu.br";
         window.DEFAULT_BANNER_URL = "figuras.png";
+        window.DEFAULT_PAGE_URL = "";
+        window.DEFAULT_TOTAL_STICKERS = 112;
 
         window.isOwnerMode = false;
         window.selectedStickerNum = null;
         window.ownerPhone = localStorage.getItem('firma_album_owner_phone') || window.DEFAULT_OWNER_PHONE;
+        window.ownerEmail = localStorage.getItem('firma_album_owner_email') || window.DEFAULT_OWNER_EMAIL;
         window.ownerBanner = localStorage.getItem('firma_album_banner_url') || window.DEFAULT_BANNER_URL;
+        window.ownerPageUrl = localStorage.getItem('firma_album_page_url') || window.DEFAULT_PAGE_URL;
+        window.totalAlbumStickers = parseInt(localStorage.getItem('firma_album_total_stickers')) || window.DEFAULT_TOTAL_STICKERS;
 
         window.tradeWants = [];  
         window.tradeOffers = []; 
+
+        // Partners data for Mural da Firma
+        const storedPartners = localStorage.getItem('firma_album_partners');
+        window.partners = storedPartners ? JSON.parse(storedPartners) : [
+            { id: 'p1', name: 'Ana Clara', dept: 'RH', count: 5 },
+            { id: 'p2', name: 'João Paulo', dept: 'TI', count: 3 }
+        ];
 
         // Helper function: Natural numeric & alphabetical sort
         window.sortStickers = function(list) {
@@ -511,14 +720,12 @@
         window.generateDefaultStickers = function() {
             const list = [];
             
-            // Numbers under "PRECISO" in spreadsheet screenshot
             const spreadsheetNeeded = [
                 "1", "2", "7", "11", "14", "18", "19", "27", "30", "35", 
                 "41", "43", "47", "51", "54", "59", "60", "62", "71", "75", 
                 "79", "81", "90", "101", "104", "108", "112"
             ];
 
-            // Numbers under "TENHO" in spreadsheet screenshot with duplicates
             const spreadsheetTrade = [
                 { num: "21", qty: 1 },
                 { num: "38", qty: 1 },
@@ -573,9 +780,25 @@
                                 window.ownerPhone = data.ownerPhone;
                                 localStorage.setItem('firma_album_owner_phone', data.ownerPhone);
                             }
+                            if (data.ownerEmail) {
+                                window.ownerEmail = data.ownerEmail;
+                                localStorage.setItem('firma_album_owner_email', data.ownerEmail);
+                            }
                             if (data.ownerBanner !== undefined) {
                                 window.ownerBanner = data.ownerBanner;
                                 localStorage.setItem('firma_album_banner_url', data.ownerBanner);
+                            }
+                            if (data.ownerPageUrl !== undefined) {
+                                window.ownerPageUrl = data.ownerPageUrl;
+                                localStorage.setItem('firma_album_page_url', data.ownerPageUrl);
+                            }
+                            if (data.totalAlbumStickers) {
+                                window.totalAlbumStickers = data.totalAlbumStickers;
+                                localStorage.setItem('firma_album_total_stickers', data.totalAlbumStickers);
+                            }
+                            if (data.partners && Array.isArray(data.partners)) {
+                                window.partners = data.partners;
+                                localStorage.setItem('firma_album_partners', JSON.stringify(data.partners));
                             }
                             if (data.stickers && Array.isArray(data.stickers)) {
                                 window.stickers = window.sortStickers(data.stickers);
@@ -583,6 +806,7 @@
                             }
                             window.updateBannerUI();
                             window.renderStickers();
+                            window.renderPartners();
                         }
                     }, (err) => console.warn("Cloud sync error:", err));
                 }
@@ -595,7 +819,11 @@
             window.stickers = window.sortStickers(window.stickers);
             localStorage.setItem('firma_album_numbers_v2', JSON.stringify(window.stickers));
             localStorage.setItem('firma_album_owner_phone', window.ownerPhone);
+            localStorage.setItem('firma_album_owner_email', window.ownerEmail);
             localStorage.setItem('firma_album_banner_url', window.ownerBanner);
+            localStorage.setItem('firma_album_page_url', window.ownerPageUrl || '');
+            localStorage.setItem('firma_album_total_stickers', window.totalAlbumStickers);
+            localStorage.setItem('firma_album_partners', JSON.stringify(window.partners));
 
             window.updateDashboardStats();
 
@@ -605,7 +833,11 @@
                     const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'album_settings', 'config');
                     await setDoc(docRef, {
                         ownerPhone: window.ownerPhone,
+                        ownerEmail: window.ownerEmail,
                         ownerBanner: window.ownerBanner,
+                        ownerPageUrl: window.ownerPageUrl || '',
+                        totalAlbumStickers: window.totalAlbumStickers,
+                        partners: window.partners,
                         stickers: window.stickers,
                         updatedAt: new Date().toISOString()
                     }, { merge: true });
@@ -619,11 +851,17 @@
             initCloudSync();
             window.updateBannerUI();
             window.renderStickers();
+            window.renderPartners();
         });
     </script>
 
-    <!-- Main Dynamic Application Script -->
+
+    <!-- ================================================================= -->
+    <!-- BLOCK 5: SCRIPT MODULE - INTERACTION & APPLICATION LOGIC          -->
+    <!-- ================================================================= -->
+
     <script>
+        // --- 5.1: BANNER & AUDIO UTILITIES ---
         function updateBannerUI() {
             const bannerImg = document.getElementById('header-banner-img');
             if (bannerImg) {
@@ -660,7 +898,8 @@
             } catch(e) {}
         }
 
-        // --- RENDER SIDE-BY-SIDE STICKERS WITH NUMERICAL SORTING ---
+
+        // --- 5.2: CARD RENDERING & DASHBOARD STATS ---
         function renderStickers() {
             const containerNeeded = document.getElementById('container-needed');
             const containerTrade = document.getElementById('container-trade');
@@ -672,7 +911,6 @@
             containerNeeded.innerHTML = '';
             containerTrade.innerHTML = '';
 
-            // Ensure dataset is always sorted before rendering
             if (typeof window.sortStickers === 'function') {
                 window.stickers = window.sortStickers(window.stickers);
             }
@@ -688,7 +926,7 @@
             document.getElementById('badge-count-needed').innerText = neededList.length;
             document.getElementById('badge-count-trade').innerText = tradeList.length;
 
-            // Render NEEDED Stickers (Rose Cards - Maurício precisa)
+            // Render NEEDED Stickers
             neededList.forEach(s => {
                 const inOffers = window.tradeOffers.includes(s.num);
                 const selectedRing = inOffers ? "ring-2 ring-amber-400 bg-amber-950/70 scale-105" : "";
@@ -711,19 +949,32 @@
                 containerNeeded.insertAdjacentHTML('beforeend', cardHtml);
             });
 
-            // Render TRADE Stickers (Emerald Cards - Maurício tem pra troca)
+            // Render TRADE Stickers
             tradeList.forEach(s => {
                 const inWants = window.tradeWants.includes(s.num);
-                const selectedRing = inWants ? "ring-2 ring-emerald-400 bg-emerald-950/70 scale-105" : "";
+                const isNegotiating = s.inNegotiation;
+                
+                let selectedRing = "";
+                if (inWants) {
+                    selectedRing = "ring-2 ring-emerald-400 bg-emerald-950/70 scale-105";
+                } else if (isNegotiating) {
+                    selectedRing = "ring-2 ring-amber-400 bg-amber-950/50";
+                }
 
                 const deleteBtnHtml = window.isOwnerMode ? 
                     `<button onclick="event.stopPropagation(); quickDeleteSticker('${s.num}')" title="Excluir" class="absolute -bottom-1.5 -right-1.5 bg-rose-600 hover:bg-rose-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center shadow z-10"><i class="fa-solid fa-xmark"></i></button>` : '';
 
+                let statusBadgeHtml = `<span class="text-[8px] font-bold px-1.5 py-0.2 rounded-full ${inWants ? 'bg-emerald-400 text-slate-950' : 'bg-emerald-500/20 text-emerald-300'}">${inWants ? '✓ Eu Quero' : 'Tem p/ Troca'}</span>`;
+                
+                if (isNegotiating && !inWants) {
+                    statusBadgeHtml = `<span class="text-[8px] font-bold px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 border border-amber-300 truncate max-w-[85px]" title="Negociando c/ ${s.inNegotiation}">🟡 ${s.inNegotiation}</span>`;
+                }
+
                 const cardHtml = `
                     <div onclick="handleCardClick('${s.num}', 'trade')" 
-                        class="sticker-card relative bg-[#2b0e12] border border-emerald-500/60 rounded-xl p-1.5 h-16 flex flex-col items-center justify-center cursor-pointer select-none shadow-md ${selectedRing}">
+                        class="sticker-card relative bg-[#2b0e12] border ${isNegotiating ? 'border-amber-400/80' : 'border-emerald-500/60'} rounded-xl p-1.5 h-16 flex flex-col items-center justify-center cursor-pointer select-none shadow-md ${selectedRing}">
                         
-                        <span class="absolute -top-1.5 -right-1.5 bg-emerald-500 text-slate-950 text-[9px] font-black px-1.5 py-0.2 rounded-full border border-slate-900 shadow">
+                        <span class="absolute -top-1.5 -right-1.5 ${isNegotiating ? 'bg-amber-400 text-slate-950' : 'bg-emerald-500 text-slate-950'} text-[9px] font-black px-1.5 py-0.2 rounded-full border border-slate-900 shadow">
                             x${s.duplicates}
                         </span>
                         ${deleteBtnHtml}
@@ -731,9 +982,7 @@
                         <span class="text-[9px] text-emerald-300/60 font-bold leading-none">#</span>
                         <span class="text-base font-black font-display text-emerald-200 tracking-tight leading-none my-0.5">${s.num}</span>
 
-                        <span class="text-[8px] font-bold px-1.5 py-0.2 rounded-full ${inWants ? 'bg-emerald-400 text-slate-950' : 'bg-emerald-500/20 text-emerald-300'}">
-                            ${inWants ? '✓ Eu Quero' : 'Tem p/ Troca'}
-                        </span>
+                        ${statusBadgeHtml}
                     </div>
                 `;
                 containerTrade.insertAdjacentHTML('beforeend', cardHtml);
@@ -748,6 +997,34 @@
 
             document.getElementById('stat-trade').innerText = tradeCount;
             document.getElementById('stat-needed').innerText = neededCount;
+
+            // Calculate progress
+            const totalStickers = window.totalAlbumStickers || 112;
+            const collectedCount = Math.max(0, totalStickers - neededCount);
+            const percent = Math.min(100, Math.round((collectedCount / totalStickers) * 100));
+
+            const barFill = document.getElementById('progress-bar-fill');
+            const percentText = document.getElementById('progress-percent-text');
+            const achievementBadge = document.getElementById('badge-achievement');
+
+            if (barFill && percentText && achievementBadge) {
+                barFill.style.width = `${percent}%`;
+                percentText.innerText = `${percent}% (${collectedCount}/${totalStickers})`;
+
+                if (percent >= 100) {
+                    achievementBadge.innerText = "👑 Álbum Completo!";
+                    achievementBadge.className = "text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-400 text-slate-950 border border-emerald-300 animate-pulse";
+                } else if (percent >= 75) {
+                    achievementBadge.innerText = "🔥 Quase Lá!";
+                    achievementBadge.className = "text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 border border-amber-300";
+                } else if (percent >= 50) {
+                    achievementBadge.innerText = "🥇 Metade Concluída!";
+                    achievementBadge.className = "text-[10px] font-black px-2 py-0.5 rounded-full bg-indigo-500 text-white border border-indigo-300";
+                } else {
+                    achievementBadge.innerText = "🥉 Começando!";
+                    achievementBadge.className = "text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30";
+                }
+            }
 
             const badge = document.getElementById('trade-counter-badge');
             const floatingBar = document.getElementById('floating-trade-bar');
@@ -769,22 +1046,154 @@
             }
         }
 
-        function requestOwnerAccess() {
+
+        // --- 5.3: MURAL DA FIRMA (HALL DA FAMA LOGIC) ---
+        function renderPartners() {
+            const container = document.getElementById('container-partners');
+            const emptyText = document.getElementById('empty-partners');
+            if (!container) return;
+
+            container.innerHTML = '';
+            const list = [...(window.partners || [])].sort((a, b) => (b.count || 0) - (a.count || 0));
+
+            emptyText.classList.toggle('hidden', list.length > 0);
+
+            list.forEach((p, index) => {
+                let badgeRank = "🎖️";
+                let badgeClass = "bg-[#2b0e12] border-[#5a2228] text-amber-300";
+
+                if (index === 0) {
+                    badgeRank = "🥇 1º";
+                    badgeClass = "bg-amber-400 text-wine-950 border-amber-300 font-black";
+                } else if (index === 1) {
+                    badgeRank = "🥈 2º";
+                    badgeClass = "bg-slate-300 text-slate-950 border-slate-100 font-black";
+                } else if (index === 2) {
+                    badgeRank = "🥉 3º";
+                    badgeClass = "bg-amber-700 text-amber-100 border-amber-600 font-black";
+                }
+
+                const ownerActions = window.isOwnerMode ? `
+                    <div class="flex items-center gap-1.5 ml-2">
+                        <button onclick="openAddPartnerModal('${p.id}')" title="Editar" class="text-amber-400 hover:text-amber-300 text-xs p-1"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deletePartner('${p.id}')" title="Excluir" class="text-rose-400 hover:text-rose-300 text-xs p-1"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                ` : '';
+
+                const cardHtml = `
+                    <div class="bg-[#2b0e12] border border-[#5a2228] rounded-xl p-3 flex items-center justify-between shadow">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs px-2 py-0.5 rounded-full border ${badgeClass}">
+                                ${badgeRank}
+                            </span>
+                            <div>
+                                <h4 class="text-xs font-bold text-[#ededed]">${p.name}</h4>
+                                <span class="text-[10px] text-[#ededed]/60 block">${p.dept}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <span class="text-xs font-black text-amber-300 bg-amber-400/10 px-2 py-1 rounded-lg border border-amber-400/20">
+                                ${p.count} fig.
+                            </span>
+                            ${ownerActions}
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', cardHtml);
+            });
+        }
+
+        function openAddPartnerModal(id = null) {
+            document.getElementById('partner-id').value = id || '';
+            const titleEl = document.getElementById('modal-partner-title');
+
+            if (id) {
+                const partner = (window.partners || []).find(p => p.id === id);
+                if (partner) {
+                    titleEl.innerText = "Editar Troca no Mural";
+                    document.getElementById('partner-name').value = partner.name;
+                    document.getElementById('partner-dept').value = partner.dept;
+                    document.getElementById('partner-count').value = partner.count;
+                }
+            } else {
+                titleEl.innerText = "Registrar Troca no Mural";
+                document.getElementById('partner-name').value = '';
+                document.getElementById('partner-dept').value = '';
+                document.getElementById('partner-count').value = 1;
+            }
+
+            openModal('modal-add-partner');
+        }
+
+        function handleSavePartner(e) {
+            e.preventDefault();
+            const id = document.getElementById('partner-id').value;
+            const name = document.getElementById('partner-name').value.trim();
+            const dept = document.getElementById('partner-dept').value.trim();
+            const count = parseInt(document.getElementById('partner-count').value) || 1;
+
+            if (!name || !dept) return;
+
+            if (id) {
+                const p = window.partners.find(item => item.id === id);
+                if (p) {
+                    p.name = name;
+                    p.dept = dept;
+                    p.count = count;
+                }
+            } else {
+                window.partners.push({
+                    id: 'p_' + Date.now(),
+                    name,
+                    dept,
+                    count
+                });
+            }
+
+            if (typeof window.saveData === 'function') window.saveData();
+            closeModal('modal-add-partner');
+            renderPartners();
+            showToast("Mural atualizado com sucesso!", "success");
+        }
+
+        function deletePartner(id) {
+            if (confirm("Remover este colega do mural?")) {
+                window.partners = window.partners.filter(p => p.id !== id);
+                if (typeof window.saveData === 'function') window.saveData();
+                renderPartners();
+                showToast("Parceiro removido do mural!", "info");
+            }
+        }
+
+
+        // --- 5.4: OWNER ACCESS & SECRET PIN MODAL CONTROL ---
+        function openPinModal() {
             if (window.isOwnerMode) {
                 window.isOwnerMode = false;
                 updateOwnerUI();
                 showToast("Modo Visitante ativado", "info");
                 return;
             }
+            const pinInput = document.getElementById('pin-input');
+            if (pinInput) pinInput.value = '';
+            openModal('modal-pin-access');
+            setTimeout(() => { if (pinInput) pinInput.focus(); }, 150);
+        }
 
-            const pin = prompt("Digite seu PIN de acesso:");
+        function handlePinSubmit(e) {
+            e.preventDefault();
+            const pinInput = document.getElementById('pin-input');
+            const pin = pinInput ? pinInput.value.trim() : '';
+
             if (pin === window.PIN_CORRECT) {
                 window.isOwnerMode = true;
+                closeModal('modal-pin-access');
                 updateOwnerUI();
                 showToast("Modo Dono ativado! 🔑", "success");
                 if (typeof confetti === 'function') confetti({ particleCount: 50, spread: 60 });
-            } else if (pin !== null) {
+            } else {
                 showToast("PIN incorreto!", "error");
+                if (pinInput) pinInput.value = '';
             }
         }
 
@@ -810,8 +1219,11 @@
                 ownerTabBtns.forEach(btn => btn.classList.add('hidden'));
             }
             renderStickers();
+            renderPartners();
         }
 
+
+        // --- 5.5: CARD CLICK & SELECTION LOGIC ---
         function handleCardClick(num, type) {
             playSound('click');
             window.selectedStickerNum = num;
@@ -831,15 +1243,24 @@
             document.getElementById('modal-card-num').innerText = `#${sticker.num}`;
 
             const badge = document.getElementById('modal-card-badge');
-            if (sticker.duplicates > 0) {
-                badge.className = "text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-500 text-slate-950";
-                badge.innerText = `${sticker.duplicates} repetidas pra troca`;
-            } else if (sticker.status === 'needed') {
-                badge.className = "text-[9px] font-bold px-2 py-0.5 rounded-full bg-rose-500 text-white";
-                badge.innerText = "Preciso!";
+            const negWrapper = document.getElementById('wrapper-negotiation-control');
+
+            if (sticker.inNegotiation) {
+                badge.className = "text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-400 text-slate-950";
+                badge.innerText = `🟡 Em Negociação c/ ${sticker.inNegotiation}`;
+                if (negWrapper) negWrapper.classList.remove('hidden');
             } else {
-                badge.className = "text-[9px] font-bold px-2 py-0.5 rounded-full bg-blue-600 text-white";
-                badge.innerText = "Já Tenho / Colada";
+                if (negWrapper) negWrapper.classList.add('hidden');
+                if (sticker.duplicates > 0) {
+                    badge.className = "text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-500 text-slate-950";
+                    badge.innerText = `${sticker.duplicates} repetidas pra troca`;
+                } else if (sticker.status === 'needed') {
+                    badge.className = "text-[9px] font-bold px-2 py-0.5 rounded-full bg-rose-500 text-white";
+                    badge.innerText = "Preciso!";
+                } else {
+                    badge.className = "text-[9px] font-bold px-2 py-0.5 rounded-full bg-blue-600 text-white";
+                    badge.innerText = "Já Tenho / Colada";
+                }
             }
 
             document.getElementById('modal-dup-count').innerText = sticker.duplicates || 0;
@@ -854,6 +1275,18 @@
             }
 
             openModal('modal-sticker-detail');
+        }
+
+        function clearNegotiation() {
+            if (!window.selectedStickerNum) return;
+            const sticker = window.stickers.find(s => s.num === window.selectedStickerNum);
+            if (sticker) {
+                delete sticker.inNegotiation;
+                if (typeof window.saveData === 'function') window.saveData();
+                closeModal('modal-sticker-detail');
+                renderStickers();
+                showToast(`Negociação da figurinha #${sticker.num} removida!`, "info");
+            }
         }
 
         function toggleTradeWant(num) {
@@ -878,6 +1311,8 @@
             updateTradeDrawer();
         }
 
+
+        // --- 5.6: STICKER EDITING & MANIPULATION ---
         function adjustRepetidas(delta) {
             if (!window.selectedStickerNum) return;
             const sticker = window.stickers.find(s => s.num === window.selectedStickerNum);
@@ -886,6 +1321,8 @@
             sticker.duplicates = Math.max(0, (sticker.duplicates || 0) + delta);
             if (sticker.duplicates > 0) {
                 sticker.status = 'owned';
+            } else {
+                delete sticker.inNegotiation;
             }
             if (typeof window.saveData === 'function') window.saveData();
             document.getElementById('modal-dup-count').innerText = sticker.duplicates;
@@ -900,6 +1337,7 @@
             if (sticker.status === 'owned') {
                 sticker.status = 'needed';
                 sticker.duplicates = 0;
+                delete sticker.inNegotiation;
             } else {
                 sticker.status = 'owned';
             }
@@ -922,7 +1360,8 @@
             closeModal('modal-sticker-detail');
         }
 
-        // Open Add Modal specifically targeted to 'needed' or 'trade' tab
+
+        // --- 5.7: ADDING & IMPORTING STICKERS ---
         function openAddStickerModalFor(targetList) {
             document.getElementById('add-number').value = '';
             const statusSelect = document.getElementById('add-status');
@@ -981,7 +1420,6 @@
                 return;
             }
 
-            // Extract alphanumeric/numeric tokens
             const items = raw.split(/[\n,;\t\s]+/).map(item => item.trim()).filter(Boolean);
             let addedCount = 0;
 
@@ -1027,18 +1465,29 @@
             }
         }
 
+
+        // --- 5.8: OWNER CONFIGURATION & TRADE PROPOSALS WITH AUTO-NEGOTIATION ---
         function openOwnerSettingsModal() {
             document.getElementById('owner-phone-input').value = window.ownerPhone;
+            document.getElementById('owner-email-input').value = window.ownerEmail || window.DEFAULT_OWNER_EMAIL;
+            document.getElementById('owner-page-url-input').value = window.ownerPageUrl || window.location.href;
             document.getElementById('owner-banner-input').value = window.ownerBanner;
+            document.getElementById('owner-total-stickers-input').value = window.totalAlbumStickers || 112;
             openModal('modal-owner-settings');
         }
 
         async function saveOwnerSettings() {
             const rawPhone = document.getElementById('owner-phone-input').value.replace(/\D/g, '');
+            const rawEmail = document.getElementById('owner-email-input').value.trim();
+            const pageUrl = document.getElementById('owner-page-url-input').value.trim();
             const bannerUrl = document.getElementById('owner-banner-input').value.trim();
+            const totalStickers = parseInt(document.getElementById('owner-total-stickers-input').value) || 112;
 
             window.ownerPhone = rawPhone || window.DEFAULT_OWNER_PHONE;
+            window.ownerEmail = rawEmail || window.DEFAULT_OWNER_EMAIL;
+            window.ownerPageUrl = pageUrl;
             window.ownerBanner = bannerUrl;
+            window.totalAlbumStickers = totalStickers;
 
             updateBannerUI();
             if (typeof window.saveData === 'function') {
@@ -1057,7 +1506,7 @@
             document.getElementById('badge-offers-qty').innerText = `${window.tradeOffers.length} tem`;
 
             if (window.tradeWants.length === 0) {
-                wantsList.innerHTML = `<p class="text-xs text-[#ededed]/50 italic text-center py-2">Nenhuma selecionada. Toque nos cards verdes da coluna "Tenho para Troca".</p>`;
+                wantsList.innerHTML = `<p class="text-xs text-[#ededed]/50 italic text-center py-2">Nenhuma selecionada. Toque nos cards verdes da coluna "REPETIDAS DO MAURÍCIO".</p>`;
             } else {
                 wantsList.innerHTML = window.tradeWants.map(num => `
                     <div class="flex items-center justify-between bg-[#381318] px-2.5 py-1 rounded-lg text-xs border border-[#5a2228]">
@@ -1068,7 +1517,7 @@
             }
 
             if (window.tradeOffers.length === 0) {
-                offersList.innerHTML = `<p class="text-xs text-[#ededed]/50 italic text-center py-2">Nenhuma oferecida. Toque nos cards vermelhos da coluna "Preciso".</p>`;
+                offersList.innerHTML = `<p class="text-xs text-[#ededed]/50 italic text-center py-2">Nenhuma oferecida. Toque nos cards vermelhos da coluna "O MAURÍCIO PRECISA".</p>`;
             } else {
                 offersList.innerHTML = window.tradeOffers.map(num => `
                     <div class="flex items-center justify-between bg-[#381318] px-2.5 py-1 rounded-lg text-xs border border-[#5a2228]">
@@ -1109,6 +1558,22 @@
             return { text: msg, name, dept };
         }
 
+        function markRequestedStickersAsNegotiating(visitorName, visitorDept) {
+            let updated = false;
+            const label = visitorDept ? `${visitorName} (${visitorDept})` : visitorName;
+            window.tradeWants.forEach(num => {
+                const s = window.stickers.find(item => item.num === num);
+                if (s) {
+                    s.inNegotiation = label;
+                    updated = true;
+                }
+            });
+            if (updated) {
+                if (typeof window.saveData === 'function') window.saveData();
+                renderStickers();
+            }
+        }
+
         function sendWhatsAppTrade() {
             const res = generateTradeMessage();
             if (!res) {
@@ -1120,8 +1585,29 @@
                 return;
             }
 
+            markRequestedStickersAsNegotiating(res.name, res.dept);
+
             const encoded = encodeURIComponent(res.text);
             const targetUrl = window.ownerPhone ? `https://wa.me/${window.ownerPhone}?text=${encoded}` : `https://api.whatsapp.com/send?text=${encoded}`;
+            window.open(targetUrl, '_blank');
+        }
+
+        function sendTeamsTrade() {
+            const res = generateTradeMessage();
+            if (!res) {
+                showToast("Selecione pelo menos uma figurinha!", "error");
+                return;
+            }
+            if (res.error) {
+                showToast(res.error, "error");
+                return;
+            }
+
+            markRequestedStickersAsNegotiating(res.name, res.dept);
+
+            const encoded = encodeURIComponent(res.text);
+            const email = window.ownerEmail || window.DEFAULT_OWNER_EMAIL || "mauricio.bitencourt@ipog.edu.br";
+            const targetUrl = `https://teams.microsoft.com/l/chat/0/0?users=${encodeURIComponent(email)}&message=${encoded}`;
             window.open(targetUrl, '_blank');
         }
 
@@ -1136,6 +1622,8 @@
                 return;
             }
 
+            markRequestedStickersAsNegotiating(res.name, res.dept);
+
             const dummy = document.createElement("textarea");
             document.body.appendChild(dummy);
             dummy.value = res.text;
@@ -1143,7 +1631,58 @@
             document.execCommand("copy");
             document.body.removeChild(dummy);
 
-            showToast("📋 Proposta copiada para a área de transferência!", "success");
+            showToast("📋 Proposta copiada! As figurinhas foram marcadas em negociação.", "success");
+        }
+
+
+        // --- 5.9: MODAL VISIBILITY, QR CODE GENERATOR & TOAST MESSAGES ---
+        let qrcodeObj = null;
+
+        function openQrModal() {
+            const currentUrl = (window.ownerPageUrl && window.ownerPageUrl.trim() !== '') 
+                ? window.ownerPageUrl.trim() 
+                : window.location.href;
+            const container = document.getElementById('qrcode-container');
+            container.innerHTML = '';
+
+            try {
+                qrcodeObj = new QRCode(container, {
+                    text: currentUrl,
+                    width: 170,
+                    height: 170,
+                    colorDark: "#2b0e12",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+            } catch(e) {
+                container.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=${encodeURIComponent(currentUrl)}" alt="QR Code">`;
+            }
+
+            document.getElementById('qr-link-display').innerText = currentUrl;
+            openModal('modal-qr-code');
+        }
+
+        function copyPageLink() {
+            const currentUrl = (window.ownerPageUrl && window.ownerPageUrl.trim() !== '') 
+                ? window.ownerPageUrl.trim() 
+                : window.location.href;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(currentUrl).then(() => {
+                    showToast("📋 Link da página copiado!", "success");
+                }).catch(() => fallbackCopy(currentUrl));
+            } else {
+                fallbackCopy(currentUrl);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+            showToast("📋 Link da página copiado!", "success");
         }
 
         function openModal(id) {
