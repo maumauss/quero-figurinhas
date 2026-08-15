@@ -87,7 +87,7 @@
             <img id="header-banner-img" 
                  src="figuras.png" 
                  alt="Título do Álbum" 
-                 class="w-full max-h-[300px] sm:max-h-[500px] object-contain rounded-2xl border border-[#5a2228] shadow-2xl transition-all"
+                 class="w-full max-h-[450px] sm:max-h-[750px] md:max-h-[900px] object-contain rounded-2xl border border-[#5a2228] shadow-2xl transition-all"
                  onerror="this.src='https://placehold.co/1200x250/381318/ededed?text=ALBUM+DO+IPOG+2026'">
         </div>
     </div>
@@ -133,7 +133,6 @@
             </div>
         </div>
     </header>
-
 
     <!-- ================================================================= -->
     <!-- BLOCK 2: MAIN DASHBOARD & DUAL COLUMN STICKER LISTS               -->
@@ -320,7 +319,6 @@
 
     </main>
 
-
     <!-- ================================================================= -->
     <!-- BLOCK 3: MODALS & OVERLAYS                                        -->
     <!-- ================================================================= -->
@@ -403,7 +401,7 @@
                 <!-- Offers Summary -->
                 <div class="bg-[#2b0e12] p-3 rounded-xl border border-[#5a2228] space-y-2">
                     <div class="flex items-center justify-between">
-                        <span class="text-[11px] font-bold text-amber-300 uppercase tracking-wider">3. Das que ele PRECISA, você tem pra dar:</span>
+                        <span class="text-[11px] font-bold text-amber-300 uppercase tracking-wider">3. Das que ele PRECISA, você tem pra trocar:</span>
                         <span id="badge-offers-qty" class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-bold">0 tem</span>
                     </div>
                     <div id="trade-offers-list" class="space-y-1 max-h-32 overflow-y-auto pr-1">
@@ -488,7 +486,7 @@
         </div>
     </div>
 
-    <!-- Modal 3: Quick Edit / Detail Modal -->
+    <!-- Modal 3: Quick Edit / Detail Modal with Manual Negotiation Option -->
     <div id="modal-sticker-detail" class="fixed inset-0 bg-[#2b0e12]/85 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-[#381318] border border-[#5a2228] rounded-2xl max-w-xs w-full p-5 space-y-4 shadow-2xl relative">
             <button onclick="closeModal('modal-sticker-detail')" class="absolute top-3 right-3 text-[#ededed]/60 hover:text-[#ededed]">
@@ -506,10 +504,32 @@
             <div id="modal-owner-controls" class="border-t border-[#5a2228] pt-3 space-y-3">
                 <label class="text-[11px] font-bold text-amber-300 uppercase tracking-wider block text-center">Editar Status (Dono)</label>
                 
-                <div id="wrapper-negotiation-control" class="hidden">
-                    <button onclick="clearNegotiation()" class="w-full py-2 bg-amber-500/20 text-amber-300 hover:bg-amber-500/40 border border-amber-400/40 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 mb-2">
-                        <i class="fa-solid fa-ban text-amber-400"></i> Cancelar Negociação
-                    </button>
+                <!-- Negotiation Status & Direct Manual Control for Owner -->
+                <div id="wrapper-negotiation-control" class="bg-[#2b0e12] p-2.5 rounded-xl border border-[#5a2228] space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-bold text-amber-300 uppercase tracking-wider">Status de Negociação</span>
+                        <span id="modal-neg-status-badge" class="text-[9px] font-semibold text-[#ededed]/70">Livre</span>
+                    </div>
+
+                    <!-- Active Negotiation State -->
+                    <div id="neg-active-controls" class="hidden space-y-2">
+                        <p id="modal-neg-with-text" class="text-xs text-amber-200 font-medium text-center bg-amber-950/50 p-1.5 rounded-lg border border-amber-500/30 truncate">
+                            🟡 Em Negociação c/ ...
+                        </p>
+                        <button onclick="clearNegotiation()" class="w-full py-2 bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 border border-rose-500/40 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 shadow">
+                            <i class="fa-solid fa-xmark text-rose-400"></i> Desmarcar Negociação
+                        </button>
+                    </div>
+
+                    <!-- Inactive Negotiation State (Allows Owner to manually set) -->
+                    <div id="neg-inactive-controls" class="space-y-1.5">
+                        <div class="flex gap-1.5">
+                            <input type="text" id="input-manual-neg-name" placeholder="Nome / Depto (opcional)" class="flex-1 py-1.5 px-2.5 bg-[#381318] border border-[#5a2228] rounded-lg text-xs text-[#ededed] focus:outline-none focus:border-amber-400 placeholder-[#ededed]/40">
+                            <button onclick="setNegotiationManual()" class="py-1.5 px-3 bg-amber-400 hover:bg-amber-300 text-wine-950 font-bold text-xs rounded-lg transition-all flex items-center gap-1 shadow whitespace-nowrap">
+                                <i class="fa-solid fa-handshake"></i> Marcar
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2">
@@ -678,7 +698,6 @@
         <div id="toast-icon" class="text-amber-400">✨</div>
         <div id="toast-message">Mensagem</div>
     </div>
-
 
     <!-- ==========================================
          BLOCK 4: SCRIPT MODULE - CLOUD & DATA STORAGE
@@ -881,7 +900,6 @@
             window.renderPartners();
         });
     </script>
-
 
     <!-- ================================================================= -->
     <!-- BLOCK 5: SCRIPT MODULE - INTERACTION & APPLICATION LOGIC          -->
@@ -1270,14 +1288,35 @@
             document.getElementById('modal-card-num').innerText = `#${sticker.num}`;
 
             const badge = document.getElementById('modal-card-badge');
-            const negWrapper = document.getElementById('wrapper-negotiation-control');
+            const negStatusBadge = document.getElementById('modal-neg-status-badge');
+            const negWithText = document.getElementById('modal-neg-with-text');
+            const activeControls = document.getElementById('neg-active-controls');
+            const inactiveControls = document.getElementById('neg-inactive-controls');
 
             if (sticker.inNegotiation) {
                 badge.className = "text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-400 text-slate-950";
                 badge.innerText = `🟡 Em Negociação c/ ${sticker.inNegotiation}`;
-                if (negWrapper) negWrapper.classList.remove('hidden');
+                
+                if (negStatusBadge) {
+                    negStatusBadge.innerText = "Em Negociação";
+                    negStatusBadge.className = "text-[9px] font-bold text-amber-300";
+                }
+                if (negWithText) {
+                    negWithText.innerText = `🟡 Em Negociação c/ ${sticker.inNegotiation}`;
+                }
+                if (activeControls) activeControls.classList.remove('hidden');
+                if (inactiveControls) inactiveControls.classList.add('hidden');
             } else {
-                if (negWrapper) negWrapper.classList.add('hidden');
+                if (negStatusBadge) {
+                    negStatusBadge.innerText = "Livre";
+                    negStatusBadge.className = "text-[9px] font-semibold text-emerald-400";
+                }
+                const inputName = document.getElementById('input-manual-neg-name');
+                if (inputName) inputName.value = '';
+
+                if (activeControls) activeControls.classList.add('hidden');
+                if (inactiveControls) inactiveControls.classList.remove('hidden');
+
                 if (sticker.duplicates > 0) {
                     badge.className = "text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-500 text-slate-950";
                     badge.innerText = `${sticker.duplicates} repetidas pra troca`;
@@ -1302,6 +1341,23 @@
             }
 
             openModal('modal-sticker-detail');
+        }
+
+        // Owner Manual Negotiation Set & Clear
+        function setNegotiationManual() {
+            if (!window.selectedStickerNum) return;
+            const sticker = window.stickers.find(s => s.num === window.selectedStickerNum);
+            if (!sticker) return;
+
+            const inputName = document.getElementById('input-manual-neg-name');
+            const nameVal = inputName ? inputName.value.trim() : '';
+            
+            sticker.inNegotiation = nameVal || "Reservada pelo Dono";
+
+            if (typeof window.saveData === 'function') window.saveData();
+            closeModal('modal-sticker-detail');
+            renderStickers();
+            showToast(`Figurinha #${sticker.num} marcada em negociação!`, "success");
         }
 
         function clearNegotiation() {
