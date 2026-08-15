@@ -154,7 +154,7 @@
                         Álbum do Maurício 🚀
                     </h2>
                     <p class="text-xs text-[#ededed]/80 max-w-xl leading-relaxed">
-                        Selecione abaixo as figurinhas que você <strong class="text-rose-400">tem para trocar</strong> e as que você <strong class="text-emerald-400">quer receber</strong>. Monte sua proposta e mande direto no Teams ou WhatsApp!
+                        Selecione abaixo as figurinhas que você <strong class="text-rose-400">tem para dar ao Maurício</strong> e as que você <strong class="text-emerald-400">quer receber dele</strong>. Monte sua proposta e mande direto no Teams ou WhatsApp!
                     </p>
                 </div>
 
@@ -244,7 +244,7 @@
                     <!-- Easy explanatory guide subheader -->
                     <p class="text-[11px] text-rose-200/70 mt-1 flex items-center gap-1 font-medium">
                         <i class="fa-solid fa-hand-holding-hand text-amber-300 text-xs"></i>
-                        <span><strong>Selecione as que VOCÊ tem:</strong></span>
+                        <span><strong>Toque nas que VOCÊ tem:</strong></span>
                     </p>
                 </div>
 
@@ -277,7 +277,7 @@
                     <!-- Easy explanatory guide subheader -->
                     <p class="text-[11px] text-emerald-200/70 mt-1 flex items-center gap-1 font-medium">
                         <i class="fa-solid fa-gift text-emerald-300 text-xs"></i>
-                        <span><strong>Selecione as que VOCÊ quer:</strong></span>
+                        <span><strong>Toque nas que VOCÊ quer:</strong></span>
                     </p>
                 </div>
 
@@ -439,6 +439,11 @@
             <h3 class="text-base font-bold font-display text-[#ededed] flex items-center gap-2">
                 <i class="fa-solid fa-gear text-amber-400"></i> Configurações do Álbum
             </h3>
+
+            <div id="cloud-status-indicator" class="bg-emerald-950/60 border border-emerald-500/40 p-2.5 rounded-xl text-xs text-emerald-300 flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Nuvem Conectada e Sincronizada em Tempo Real!</span>
+            </div>
 
             <p class="text-xs text-[#ededed]/70">
                 Configure seu WhatsApp, E-mail do Teams, total de figurinhas e link da página.
@@ -683,6 +688,16 @@
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // FIREBASE CREDENTIALS
+        const EXTERNAL_FIREBASE_CONFIG = {
+            apiKey: "AIzaSyB-SL0lGBusU29CYS57toSnLA2-bLv38W0",
+            authDomain: "album-ipog-2026.firebaseapp.com",
+            projectId: "album-ipog-2026",
+            storageBucket: "album-ipog-2026.firebasestorage.app",
+            messagingSenderId: "291917869946",
+            appId: "1:291917869946:web:1fcbb491892e26b0685cc3"
+        };
+
         // APP CONSTANTS & DEFAULTS
         window.PIN_CORRECT = "3141";
         window.DEFAULT_OWNER_PHONE = "5562998396026";
@@ -753,15 +768,21 @@
         window.stickers = storedData ? window.sortStickers(JSON.parse(storedData)) : window.generateDefaultStickers();
 
         // Cloud Storage Setup
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'firma-album-2026';
+        const appId = EXTERNAL_FIREBASE_CONFIG.projectId || 'album-ipog-2026';
         let db = null;
         let auth = null;
 
         async function initCloudSync() {
             try {
-                if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-                    const firebaseConfig = JSON.parse(__firebase_config);
-                    const app = initializeApp(firebaseConfig);
+                let activeConfig = null;
+                if (typeof EXTERNAL_FIREBASE_CONFIG !== 'undefined' && EXTERNAL_FIREBASE_CONFIG.apiKey && EXTERNAL_FIREBASE_CONFIG.apiKey !== "SUA_API_KEY_AQUI") {
+                    activeConfig = EXTERNAL_FIREBASE_CONFIG;
+                } else if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                    activeConfig = JSON.parse(__firebase_config);
+                }
+
+                if (activeConfig) {
+                    const app = initializeApp(activeConfig);
                     auth = getAuth(app);
                     db = getFirestore(app);
 
@@ -769,6 +790,12 @@
                         await signInWithCustomToken(auth, __initial_auth_token);
                     } else {
                         await signInAnonymously(auth);
+                    }
+
+                    const statusEl = document.getElementById('cloud-status-indicator');
+                    if (statusEl) {
+                        statusEl.className = "bg-emerald-950/60 border border-emerald-500/40 p-2.5 rounded-xl text-xs text-emerald-300 flex items-center gap-2";
+                        statusEl.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span> <span>Nuvem Conectada e Sincronizada em Tempo Real!</span>`;
                     }
 
                     // Listen to real-time updates from cloud
